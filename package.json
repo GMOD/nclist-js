@@ -1,0 +1,76 @@
+{
+  "name": "@gmod/nclist",
+  "version": "0.0.1",
+  "description": "Read features from JBrowse 1 format nested containment list JSON",
+  "main": "dist/index.js",
+  "repository": "github:GMOD/nclist-js",
+  "author": {
+    "name": "Robert Buels",
+    "email": "rbuels@gmail.com",
+    "url": "https://github.com/rbuels"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/GMOD/nclist-js",
+  "bugs": {
+    "url": "https://github.com/GMOD/nclist-js/issues"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "test": "jest",
+    "coverage": "npm test -- --coverage",
+    "lint": "eslint src test",
+    "docs": "documentation readme src/index.js --section API",
+    "clean": "rimraf dist",
+    "prebuild": "npm run docs && npm run clean && npm run lint",
+    "build": "babel src -d dist",
+    "watch": "npm-watch",
+    "patch": "npm version patch && npm publish --access public",
+    "minor": "npm version minor && npm publish --access public",
+    "major": "npm version major && npm publish --access public",
+    "prepublishOnly": "npm test && npm run build",
+    "postpublish": "git push origin master --follow-tags"
+  },
+  "watch": {
+    "test": "{src,test}/*.js",
+    "lint": "{src,test}/*.js",
+    "build": "src"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.3",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.3.1",
+    "babel-jest": "^24.5.0",
+    "documentation": "^9.1.1",
+    "eslint": "^5.5.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-prettier": "^3.0.1",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.5.0",
+    "jest-fetch-mock": "^2.1.2",
+    "npm-watch": "^0.5.0",
+    "prettier": "^1.14.2",
+    "regenerator-runtime": "^0.13.1",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.3.1",
+    "abortable-promise-cache": "^1.0.1",
+    "quick-lru": "^4.0.0"
+  },
+  "keywords": [
+    "jbrowse",
+    "genomics",
+    "bionode",
+    "biojs"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

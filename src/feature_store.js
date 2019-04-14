@@ -1,0 +1,226 @@
+import nodeUrl from 'url'
+
+// define([
+//            'JBrowse/Util',
+//            'JBrowse/Model/ArrayRepr',
+//            'JBrowse/Store/NCList',
+//            'JBrowse/Store/LazyArray'
+//        ],
+//        function(
+//            Util,
+//            ArrayRepr,
+//            GenericNCList,
+//            LazyArray
+//        ) {
+
+import GenericNCList from './nclist'
+import ArrayRepr from './array_representation'
+import LazyArray from './lazy_array'
+
+/**
+ * Implementation of SeqFeatureStore using nested containment
+ * lists held in static files that are lazily fetched from the web
+ * server.
+ *
+ * @class JBrowse.Store.SeqFeature.NCList
+ * @extends SeqFeatureStore
+ */
+
+function idfunc() {
+  return this._uniqueID
+}
+function parentfunc() {
+  return this._parent
+}
+function childrenfunc() {
+  return this.get('subfeatures')
+}
+
+export default class FeatureStore {
+  constructor({ baseUrl, urlTemplate, fetch }) {
+    this.baseUrl = baseUrl
+    this.urlTemplates = { root: urlTemplate }
+
+    this.fetch = fetch
+    if (!this.fetch) throw new Error(`must provide a "fetch" function argument`)
+  }
+
+  makeNCList() {
+    return new GenericNCList({ fetch: this.fetch })
+  }
+
+  loadNCList(refData, trackInfo, listUrl) {
+    refData.nclist.importExisting(
+      trackInfo.intervals.nclist,
+      refData.attrs,
+      listUrl,
+      trackInfo.intervals.urlTemplate,
+      trackInfo.intervals.lazyClass,
+    )
+  }
+
+  getDataRoot(refName) {
+    if (this.dataRoot && this.dataRoot.refName === refName) return this.dataRoot
+    this.dataRoot = this.fetchDataRoot(refName)
+    return this.dataRoot
+  }
+
+  fetchDataRoot(refName) {
+    const url = nodeUrl.resolve(this.urlTemplates.root, {
+      refseq: refName,
+    })
+
+    // fetch the trackdata
+    return this.fetch(url, {
+      handleAs: 'json',
+      headers: {
+        'X-Requested-With': null,
+      },
+    }).then(
+      trackInfo =>
+        // trackInfo = JSON.parse( trackInfo );
+        this.parseTrackInfo(trackInfo, url),
+      error => {
+        if (error.response.status === 404) {
+          this.parseTrackInfo({}, url)
+        } else {
+          throw error
+        }
+      },
+    )
+  }
+
+  parseTrackInfo(trackInfo, url) {
+    const refData = {
+      nclist: this.makeNCList(),
+      stats: {
+        featureCount: trackInfo.featureCount || 0,
+        featureDensity: (trackInfo.featureCount || 0) / this.refSeq.length,
+      },
+    }
+
+    if (trackInfo.intervals) {
+      refData.attrs = new ArrayRepr(trackInfo.intervals.classes)
+      this.loadNCList(refData, trackInfo, url)
+    }
+
+    const histograms = trackInfo.histograms
+    if (histograms && histograms.meta) {
+      for (let i = 0; i < histograms.meta.length; i += 1) {
+        histograms.meta[i].lazyArray = new LazyArray(
+          histograms.meta[i].arrayParams,
+          url,
+        )
+      }
+      refData._histograms = histograms
+    }
+
+    return refData
+  }
+
+  async getRegionStats(query) {
+    const data = await this.getDataRoot(query.ref)
+    return data.stats
+  }
+
+  async getRegionFeatureDensities(query) {
+    const data = await this.getDataRoot(query.ref)
+    let numBins
+    let basesPerBin
+    if (query.numBins) {
+      numBins = query.numBins
+      basesPerBin = (query.end - query.start) / numBins
+    } else if (query.basesPerBin) {
+      basesPerBin = query.basesPerBin
+      numBins = Math.ceil((query.end - query.start) / basesPerBin)
+    } else {
+      throw new Error(
+        'numBins or basesPerBin arg required for getRegionFeatureDensities',
+      )
+    }
+
+    // pick the relevant entry in our pre-calculated stats
+    const stats = data._histograms.stats || []
+    const statEntry = stats.find(entry => entry.basesPerBin >= basesPerBin)
+
+    // The histogramMeta array describes multiple levels of histogram detail,
+    // going from the finest (smallest number of bases per bin) to the
+    // coarsest (largest number of bases per bin).
+    // We want to use coarsest histogramMeta that's at least as fine as the
+    // one we're currently rendering.
+    // TODO: take into account that the histogramMeta chosen here might not
+    // fit neatly into the current histogram (e.g., if the current histogram
+    // is at 50,000 bases/bin, and we have server histograms at 20,000
+    // and 2,000 bases/bin, then we should choose the 2,000 histogramMeta
+    // rather than the 20,000)
+    let histogramMeta = data._histograms.meta[0]
+    for (let i = 0; i < data._histograms.meta.length; i += 1) {
+      if (basesPerBin >= data._histograms.meta[i].basesPerBin)
+        histogramMeta = data._histograms.meta[i]
+    }
+
+    // number of bins in the server-supplied histogram for each current bin
+    let binRatio = basesPerBin / histogramMeta.basesPerBin
+
+    // if the server-supplied histogram fits neatly into our requested
+    if (binRatio > 0.9 && Math.abs(binRatio - Math.round(binRatio)) < 0.0001) {
+      // console.log('server-supplied',query);
+      // we can use the server-supplied counts
+      const firstServerBin = Math.floor(query.start / histogramMeta.basesPerBin)
+      binRatio = Math.round(binRatio)
+      const histogram = []
+      for (let bin = 0; bin < numBins; bin += 1) histogram[bin] = 0
+
+      for await (const [i, val] of histogramMeta.lazyArray.range(
+        firstServerBin,
+        firstServerBin + binRatio * numBins,
+      )) {
+        // this will count features that span the boundaries of
+        // the original histogram multiple times, so it's not
+        // perfectly quantitative.  Hopefully it's still useful, though.
+        histogram[Math.floor((i - firstServerBin) / binRatio)] += val
+      }
+      return { bins: histogram, stats: statEntry }
+    }
+    // console.log('make own',query);
+    // make our own counts
+    const hist = await data.nclist.histogram(query.start, query.end, numBins)
+    return { bins: hist, stats: statEntry }
+  }
+
+  async *getFeatures({ refName, start, end }) {
+    const data = await this.getDataRoot(refName)
+    const accessors = data.attrs.accessors()
+    for await (const [feature, path] of data.nclist.iterate(start, end)) {
+      // the unique ID is a stringification of the path in the
+      // NCList where the feature lives; it's unique across the
+      // top-level NCList (the top-level NCList covers a
+      // track/chromosome combination)
+
+      // only need to decorate a feature once
+      if (!feature.decorated) {
+        const uniqueID = path.join(',')
+        this.decorateFeature(accessors, feature, uniqueID)
+      }
+      yield feature
+    }
+  }
+
+  // helper method to recursively add .get and .tags methods to a feature and its
+  // subfeatures
+  decorateFeature(accessors, feature, id, parent) {
+    feature.get = accessors.get
+    // possibly include set method in decorations? not currently
+    //    feature.set = accessors.set;
+    feature.tags = accessors.tags
+    feature._uniqueID = id
+    feature.id = idfunc
+    feature._parent = parent
+    feature.parent = parentfunc
+    feature.children = childrenfunc
+    ;(feature.get('subfeatures') || []).forEach((f, i) => {
+      this.decorateFeature(accessors, f, `${id}-${i}`, feature)
+    })
+    feature.decorated = true
+  }
+}
