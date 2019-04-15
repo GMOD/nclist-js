@@ -211,7 +211,7 @@ class ArrayRepr {
    */
   accessors() {
     if (!this._accessors) this._accessors = this._makeAccessors()
-    return this.accessors
+    return this._accessors
   }
 
   /**
@@ -263,8 +263,12 @@ class ArrayRepr {
       const attrIndices = indices[attrname]
       // get
       accessors.get.field_accessors[attrname] = !attrIndices
-        ? () => undefined
-        : () => this[attrIndices[this[0]]]
+        ? function get() {
+            return undefined
+          }
+        : function get() {
+            return this[attrIndices[this[0]]]
+          }
 
       // set
       accessors.set.field_accessors[attrname] = !attrIndices

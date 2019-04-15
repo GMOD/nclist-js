@@ -37,16 +37,17 @@ function childrenfunc() {
 }
 
 export default class FeatureStore {
-  constructor({ baseUrl, urlTemplate, fetch }) {
+  constructor({ baseUrl, urlTemplate, readFile }) {
     this.baseUrl = baseUrl
     this.urlTemplates = { root: urlTemplate }
 
-    this.fetch = fetch
-    if (!this.fetch) throw new Error(`must provide a "fetch" function argument`)
+    this.readFile = readFile
+    if (!this.readFile)
+      throw new Error(`must provide a "readFile" function argument`)
   }
 
   makeNCList() {
-    return new GenericNCList({ fetch: this.fetch })
+    return new GenericNCList({ readFile: this.readFile })
   }
 
   loadNCList(refData, trackInfo, listUrl) {
@@ -65,28 +66,44 @@ export default class FeatureStore {
     return this.dataRoot
   }
 
+  // async fetchJSON(url) {
+  //   const response = await this.fetch(url, {
+  //     headers: {
+  //       'X-Requested-With': null,
+  //     },
+  //   })
+  //   debugger
+  //   if (response.status === 404) return {}
+  //   if (response.status === 200) {
+  //     const text = await response.text()
+  //     return JSON.parse(text)
+  //   }
+  //   throw new Error(`HTTP ${response.status} fetching ${url}`)
+  // }
+
+  async readJSON(url, options = {}) {
+    const { defaultContent = {} } = options
+    try {
+      const str = await this.readFile(url, { encoding: 'utf8' })
+      return JSON.parse(str)
+    } catch (error) {
+      if (error.code === 'ENOENT' || error.status === 404) {
+        return defaultContent
+      }
+      throw error
+    }
+  }
+
   fetchDataRoot(refName) {
-    const url = nodeUrl.resolve(this.urlTemplates.root, {
-      refseq: refName,
-    })
+    const url = nodeUrl.resolve(
+      this.baseUrl,
+      this.urlTemplates.root.replace(/{\s*refseq\s*}/g, refName),
+    )
 
     // fetch the trackdata
-    return this.fetch(url, {
-      handleAs: 'json',
-      headers: {
-        'X-Requested-With': null,
-      },
-    }).then(
-      trackInfo =>
-        // trackInfo = JSON.parse( trackInfo );
-        this.parseTrackInfo(trackInfo, url),
-      error => {
-        if (error.response.status === 404) {
-          this.parseTrackInfo({}, url)
-        } else {
-          throw error
-        }
-      },
+    return this.readJSON(url).then(trackInfo =>
+      // trackInfo = JSON.parse( trackInfo );
+      this.parseTrackInfo(trackInfo, url),
     )
   }
 
@@ -95,7 +112,6 @@ export default class FeatureStore {
       nclist: this.makeNCList(),
       stats: {
         featureCount: trackInfo.featureCount || 0,
-        featureDensity: (trackInfo.featureCount || 0) / this.refSeq.length,
       },
     }
 
@@ -108,7 +124,7 @@ export default class FeatureStore {
     if (histograms && histograms.meta) {
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
-          histograms.meta[i].arrayParams,
+          { ...histograms.meta[i].arrayParams, readFile: this },
           url,
         )
       }

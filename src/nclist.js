@@ -3,14 +3,14 @@ import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
 
 export default class NCList {
-  constructor({ fetch, cacheSize = 100 }) {
+  constructor({ readFile, cacheSize = 100 }) {
     this.topList = []
     this.chunkCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
       fill: this.readChunkItems.bind(this),
     })
-    this.fetch = fetch
-    if (!this.fetch) throw new Error(`must provide a "fetch" function option`)
+    this.readFile = readFile
+    if (!this.readFile) throw new Error(`must provide a "readFile" function`)
   }
 
   importExisting(nclist, attrs, baseURL, lazyUrlTemplate, lazyClass) {

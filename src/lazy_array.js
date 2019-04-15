@@ -9,15 +9,15 @@ import AbortablePromiseCache from 'abortable-promise-cache'
  */
 export default class LazyArray {
   constructor(
-    { urlTemplate, chunkSize, length, cacheSize = 100, fetch },
+    { urlTemplate, chunkSize, length, cacheSize = 100, readFile },
     baseUrl,
   ) {
     this.urlTemplate = urlTemplate
     this.chunkSize = chunkSize
     this.length = length
     this.baseUrl = baseUrl === undefined ? '' : baseUrl
-    this.fetch = fetch
-    if (!fetch) throw new Error('must provide fetch callback')
+    this.readFile = readFile
+    if (!readFile) throw new Error('must provide readFile callback')
     this.chunkCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
       fill: this.getChunk.bind(this),
@@ -47,12 +47,12 @@ export default class LazyArray {
     const firstChunk = Math.floor(start / this.chunkSize)
     const lastChunk = Math.floor(end / this.chunkSize)
 
-    const chunkFetches = []
+    const chunkreadFilees = []
     for (let chunk = firstChunk; chunk <= lastChunk; chunk += 1) {
-      chunkFetches.push(this.chunkCache.get(chunk))
+      chunkreadFilees.push(this.chunkCache.get(chunk))
     }
-    for (let i = 0; i < chunkFetches.length; i += 1) {
-      const [chunkNumber, chunkData] = await chunkFetches[i]
+    for (let i = 0; i < chunkreadFilees.length; i += 1) {
+      const [chunkNumber, chunkData] = await chunkreadFilees[i]
       yield* this.filterChunkData(start, end, chunkNumber, chunkData)
     }
   }
@@ -62,7 +62,7 @@ export default class LazyArray {
     if (this.baseUrl) {
       url = nodeUrl.resolve(this.baseUrl, url)
     }
-    const data = await this.fetch(url, {
+    const data = await this.readFile(url, {
       handleAs: 'json',
     })
     debugger
