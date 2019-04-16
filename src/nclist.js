@@ -22,7 +22,6 @@ export default class NCList {
     this.lazyClass = lazyClass
     this.baseURL = baseURL
     this.lazyUrlTemplate = lazyUrlTemplate
-    this.lazyChunks = {}
   }
 
   /**
@@ -128,10 +127,6 @@ export default class NCList {
       if (arr[i][0] === this.lazyClass) {
         // this is a lazily-loaded chunk of the nclist
         const chunkNum = getChunk(arr[i])
-        if (!(chunkNum in this.lazyChunks)) {
-          this.lazyChunks[chunkNum] = {}
-        }
-
         const chunkItemsP = this.chunkCache
           .get(chunkNum, chunkNum)
           .then(item => [item, chunkNum])

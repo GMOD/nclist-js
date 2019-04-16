@@ -29,7 +29,7 @@ describe('ensembl genes', () => {
     ],
   ]
   testCases.forEach(([desc, params]) => {
-    test(desc, async () => {
+    test(`${desc} whole dataset`, async () => {
       const store = new NCListStore(params())
 
       const features = []
@@ -48,6 +48,35 @@ describe('ensembl genes', () => {
       expect(features[20].get('subfeatures')).toBe(undefined)
       expect(features[409].get('subfeatures').length).toBe(3)
       expect(features).toMatchSnapshot()
+    })
+
+    test(`${desc} small feature queries`, async () => {
+      const store = new NCListStore(params())
+      const features = []
+
+      for await (const feature of store.getFeatures({
+        refName: '21',
+        start: 10000,
+        end: 1000000,
+      })) {
+        features.push(feature)
+      }
+      expect(features.length).toBe(1)
+
+      features.length = 0
+      for await (const feature of store.getFeatures({
+        refName: '21',
+        start: 9437273,
+        end: 9439473,
+      })) {
+        features.push(feature)
+      }
+
+      expect(features.length).toBe(86)
+      features.forEach(feature => {
+        expect(feature.get('start')).toBeLessThan(9439473)
+        expect(feature.get('end')).toBeGreaterThan(9437273)
+      })
     })
   })
 })
