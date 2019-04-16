@@ -4,20 +4,20 @@
       "@babel/preset-env",
       {
         "targets": {
-          // "browsers": [
-          //   "last 2 versions",
-          //   "> 0.5%"
-          // ],
-          "node": "11.0"
+          "browsers": [
+            "last 2 versions",
+            "> 0.5%"
+          ],
+          "node": "6.10"
         }
       }
     ]
   ],
   "retainLines": true,
   "sourceMaps": true,
-  // "plugins": [
-  //   [
-  //     "@babel/plugin-transform-runtime"
-  //   ]
-  // ]
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime"
+    ]
+  ]
 }
