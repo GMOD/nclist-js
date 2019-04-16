@@ -63,7 +63,7 @@
     "rimraf": "^2.6.2"
   },
   "dependencies": {
-    "@babel/runtime": "^7.3.1",
+    "@babel/runtime-corejs2": "^7.4.3",
     "abortable-promise-cache": "^1.0.1",
     "quick-lru": "^4.0.0"
   },
