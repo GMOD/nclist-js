@@ -99,12 +99,27 @@ export default class FeatureStore {
     if (histograms && histograms.meta) {
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
-          { ...histograms.meta[i].arrayParams, readFile: this },
+          { ...histograms.meta[i].arrayParams, readFile: this.readFile },
           url,
         )
       }
       refData._histograms = histograms
     }
+
+    // parse any strings in the histogram data that look like numbers
+    Object.keys(refData._histograms).forEach(key => {
+      const entries = refData._histograms[key]
+      entries.forEach(entry => {
+        Object.keys(entry).forEach(key2 => {
+          if (
+            typeof entry[key2] === 'string' &&
+            String(Number(entry[key2])) === entry[key2]
+          ) {
+            entry[key2] = Number(entry[key2])
+          }
+        })
+      })
+    })
 
     return refData
   }
@@ -114,18 +129,32 @@ export default class FeatureStore {
     return data.stats
   }
 
-  async getRegionFeatureDensities(query) {
-    const data = await this.getDataRoot(query.ref)
-    let numBins
-    let basesPerBin
-    if (query.numBins) {
-      numBins = query.numBins
-      basesPerBin = (query.end - query.start) / numBins
-    } else if (query.basesPerBin) {
-      basesPerBin = query.basesPerBin
-      numBins = Math.ceil((query.end - query.start) / basesPerBin)
+  /**
+   * fetch binned counts of feature coverage in the given region.
+   *
+   * @param {object} query
+   * @param {string} query.refName reference sequence name
+   * @param {number} query.start region start
+   * @param {number} query.end region end
+   * @param {number} query.numBins number of bins desired in the feature counts
+   * @param {number} query.basesPerBin number of bp desired in each feature counting bin
+   * @returns {object} as:
+   *    `{ bins: hist, stats: statEntry }`
+   */
+  async getRegionFeatureDensities({
+    refName,
+    start,
+    end,
+    numBins,
+    basesPerBin,
+  }) {
+    const data = await this.getDataRoot(refName)
+    if (numBins) {
+      basesPerBin = (end - start) / numBins
+    } else if (basesPerBin) {
+      numBins = Math.ceil((end - start) / basesPerBin)
     } else {
-      throw new Error(
+      throw new TypeError(
         'numBins or basesPerBin arg required for getRegionFeatureDensities',
       )
     }
@@ -157,14 +186,14 @@ export default class FeatureStore {
     if (binRatio > 0.9 && Math.abs(binRatio - Math.round(binRatio)) < 0.0001) {
       // console.log('server-supplied',query);
       // we can use the server-supplied counts
-      const firstServerBin = Math.floor(query.start / histogramMeta.basesPerBin)
+      const firstServerBin = Math.floor(start / histogramMeta.basesPerBin)
       binRatio = Math.round(binRatio)
       const histogram = []
       for (let bin = 0; bin < numBins; bin += 1) histogram[bin] = 0
 
       for await (const [i, val] of histogramMeta.lazyArray.range(
         firstServerBin,
-        firstServerBin + binRatio * numBins,
+        firstServerBin + binRatio * numBins - 1,
       )) {
         // this will count features that span the boundaries of
         // the original histogram multiple times, so it's not
@@ -175,7 +204,7 @@ export default class FeatureStore {
     }
     // console.log('make own',query);
     // make our own counts
-    const hist = await data.nclist.histogram(query.start, query.end, numBins)
+    const hist = await data.nclist.histogram(start, end, numBins)
     return { bins: hist, stats: statEntry }
   }
 

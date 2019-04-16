@@ -77,6 +77,14 @@ describe('ensembl genes', () => {
         expect(feature.get('start')).toBeLessThan(9439473)
         expect(feature.get('end')).toBeGreaterThan(9437273)
       })
+
+      const hist = await store.getRegionFeatureDensities({
+        refName: '21',
+        start: 0,
+        end: 1000000,
+        numBins: 10,
+      })
+      expect(hist).toMatchSnapshot()
     })
   })
 })

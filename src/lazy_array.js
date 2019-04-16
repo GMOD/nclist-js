@@ -1,6 +1,7 @@
 import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
+import { readJSON } from './util'
 
 /**
  * For a JSON array that gets too large to load in one go, this class
@@ -47,12 +48,12 @@ export default class LazyArray {
     const firstChunk = Math.floor(start / this.chunkSize)
     const lastChunk = Math.floor(end / this.chunkSize)
 
-    const chunkreadFilees = []
+    const chunkreadFiles = []
     for (let chunk = firstChunk; chunk <= lastChunk; chunk += 1) {
-      chunkreadFilees.push(this.chunkCache.get(chunk))
+      chunkreadFiles.push(this.chunkCache.get(chunk, chunk))
     }
-    for (let i = 0; i < chunkreadFilees.length; i += 1) {
-      const [chunkNumber, chunkData] = await chunkreadFilees[i]
+    for (let i = 0; i < chunkreadFiles.length; i += 1) {
+      const [chunkNumber, chunkData] = await chunkreadFiles[i]
       yield* this.filterChunkData(start, end, chunkNumber, chunkData)
     }
   }
@@ -62,10 +63,7 @@ export default class LazyArray {
     if (this.baseUrl) {
       url = nodeUrl.resolve(this.baseUrl, url)
     }
-    const data = await this.readFile(url, {
-      handleAs: 'json',
-    })
-    debugger
+    const data = await readJSON(url, this.readFile)
     return [chunkNumber, data]
   }
 
