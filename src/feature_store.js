@@ -5,15 +5,6 @@ import ArrayRepr from './array_representation'
 import LazyArray from './lazy_array'
 import { readJSON } from './util'
 
-/**
- * Implementation of SeqFeatureStore using nested containment
- * lists held in static files that are lazily fetched from the web
- * server.
- *
- * @class JBrowse.Store.SeqFeature.NCList
- * @extends SeqFeatureStore
- */
-
 function idfunc() {
   return this._uniqueID
 }
@@ -24,7 +15,18 @@ function childrenfunc() {
   return this.get('subfeatures')
 }
 
-export default class FeatureStore {
+/**
+ * Sequence feature store using nested containment
+ * lists held in JSON files that are lazily read.
+ *
+ * @param {object} args constructor args
+ * @param {string} args.baseUrl base URL for resolving relative URLs
+ * @param {string} args.urlTemplate Template string for
+ *  the root file of each reference sequence. The reference sequence
+ *  name will be interpolated into this string where `{refseq}` appears.
+ * @param {function} args.readFile function to use for reading remote from URLs.
+ */
+export default class NCListStore {
   constructor({ baseUrl, urlTemplate, readFile }) {
     this.baseUrl = baseUrl
     this.urlTemplates = { root: urlTemplate }
@@ -53,21 +55,6 @@ export default class FeatureStore {
     this.dataRoot = this.fetchDataRoot(refName)
     return this.dataRoot
   }
-
-  // async fetchJSON(url) {
-  //   const response = await this.fetch(url, {
-  //     headers: {
-  //       'X-Requested-With': null,
-  //     },
-  //   })
-  //   debugger
-  //   if (response.status === 404) return {}
-  //   if (response.status === 200) {
-  //     const text = await response.text()
-  //     return JSON.parse(text)
-  //   }
-  //   throw new Error(`HTTP ${response.status} fetching ${url}`)
-  // }
 
   fetchDataRoot(refName) {
     const url = nodeUrl.resolve(
@@ -210,6 +197,16 @@ export default class FeatureStore {
     return { bins: hist, stats: statEntry }
   }
 
+  /**
+   * Fetch features in a given region. This method is an asynchronous generator
+   * yielding feature objects.
+   *
+   * @param {object} args
+   * @param {string} args.refName reference sequence name
+   * @param {number} args.start start of region. 0-based half-open.
+   * @param {number} args.end end of region. 0-based half-open.
+   * @yields {object}
+   */
   async *getFeatures({ refName, start, end }) {
     const data = await this.getDataRoot(refName)
     const accessors = data.attrs && data.attrs.accessors()

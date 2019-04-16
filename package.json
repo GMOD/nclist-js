@@ -24,7 +24,7 @@
     "test": "jest",
     "coverage": "npm test -- --coverage",
     "lint": "eslint src test",
-    "docs": "documentation readme src/index.js --section API",
+    "docs": "documentation readme --shallow src/feature_store.js --section API",
     "clean": "rimraf dist",
     "prebuild": "npm run docs && npm run clean && npm run lint",
     "build": "babel src -d dist",

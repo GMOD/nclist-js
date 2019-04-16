@@ -1,5 +1,5 @@
 import { RemoteFile } from 'generic-filehandle'
-import NCListStore from '../src/feature_store'
+import NCListStore from '../src'
 import makeTestServer from './static_server'
 
 let testServer
