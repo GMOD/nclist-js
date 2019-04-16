@@ -85,6 +85,16 @@ describe('ensembl genes', () => {
         numBins: 10,
       })
       expect(hist).toMatchSnapshot()
+
+      features.length = 0
+      for await (const feature of store.getFeatures({
+        refName: '22',
+        start: 9437273,
+        end: 9439473,
+      })) {
+        features.push(feature)
+      }
+      expect(features.length).toBe(0)
     })
   })
 })

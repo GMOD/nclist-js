@@ -107,19 +107,21 @@ export default class FeatureStore {
     }
 
     // parse any strings in the histogram data that look like numbers
-    Object.keys(refData._histograms).forEach(key => {
-      const entries = refData._histograms[key]
-      entries.forEach(entry => {
-        Object.keys(entry).forEach(key2 => {
-          if (
-            typeof entry[key2] === 'string' &&
-            String(Number(entry[key2])) === entry[key2]
-          ) {
-            entry[key2] = Number(entry[key2])
-          }
+    if (refData._histograms) {
+      Object.keys(refData._histograms).forEach(key => {
+        const entries = refData._histograms[key]
+        entries.forEach(entry => {
+          Object.keys(entry).forEach(key2 => {
+            if (
+              typeof entry[key2] === 'string' &&
+              String(Number(entry[key2])) === entry[key2]
+            ) {
+              entry[key2] = Number(entry[key2])
+            }
+          })
         })
       })
-    })
+    }
 
     return refData
   }
@@ -210,7 +212,7 @@ export default class FeatureStore {
 
   async *getFeatures({ refName, start, end }) {
     const data = await this.getDataRoot(refName)
-    const accessors = data.attrs.accessors()
+    const accessors = data.attrs && data.attrs.accessors()
     for await (const [feature, path] of data.nclist.iterate(start, end)) {
       // the unique ID is a stringification of the path in the
       // NCList where the feature lives; it's unique across the

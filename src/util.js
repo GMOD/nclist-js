@@ -1,7 +1,8 @@
 export async function readJSON(url, readFile, options = {}) {
   const { defaultContent = {} } = options
+  let str
   try {
-    const str = await readFile(url, { encoding: 'utf8' })
+    str = await readFile(url, { encoding: 'utf8' })
     return JSON.parse(str)
   } catch (error) {
     if (error.code === 'ENOENT' || error.status === 404) {
