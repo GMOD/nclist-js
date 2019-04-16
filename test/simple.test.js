@@ -42,6 +42,8 @@ describe('simple data', () => {
 
       expect(features.length).toBe(1)
       expect(features[0].get('start')).toBe(1049)
+      expect(features[0].get('Start')).toBe(1049)
+      expect(features[0].get('zonker')).toBe(undefined)
       expect(features).toMatchSnapshot()
     })
   })
