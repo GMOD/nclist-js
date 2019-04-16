@@ -6,7 +6,7 @@ Read legacy JBrowse 1 nested containment list JSON.
 
 [![Build Status](https://img.shields.io/travis/com/GMOD/nclist-js/master.svg?logo=travis&style=flat-square)](https://travis-ci.com/GMOD/nclist-js)
 [![Coverage Status](https://img.shields.io/codecov/c/github/GMOD/nclist-js/master.svg?style=flat-square)](https://codecov.io/gh/GMOD/nclist-js/branch/master)
-[![NPM version](https://img.shields.io/npm/v/@gmod/vcf.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/cram)
+[![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
 [![Greenkeeper badge](https://badges.greenkeeper.io/GMOD/nclist-js.svg)](https://greenkeeper.io/)
 
 ## Usage
