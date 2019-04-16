@@ -18,7 +18,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "scripts": {
     "test": "jest",
@@ -46,7 +46,6 @@
     "@babel/plugin-transform-runtime": "^7.2.0",
     "@babel/preset-env": "^7.3.1",
     "babel-jest": "^24.5.0",
-    "cross-fetch": "^3.0.2",
     "documentation": "^9.1.1",
     "eslint": "^5.5.0",
     "eslint-config-airbnb-base": "^13.1.0",
