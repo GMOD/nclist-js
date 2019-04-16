@@ -1,6 +1,7 @@
-import url from 'url'
+import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
+import { readJSON } from './util'
 
 export default class NCList {
   constructor({ readFile, cacheSize = 100 }) {
@@ -107,33 +108,18 @@ export default class NCList {
   }
 
   readChunkItems(chunkNum) {
-    return this.fetch({
-      url: url.resolve(
-        this.baseURL,
-        this.lazyUrlTemplate.replace(/\{Chunk\}/gi, chunkNum),
-      ),
-      handleAs: 'json',
-      headers: {
-        'X-Requested-With': null,
-      },
-    }).then(
-      response => {
-        // parse the json
-        debugger
-        return JSON.parse(response.body)
-      },
-      error => {
-        // swallow 404 errors, those just mean no data
-        if (error.response.status !== 404) throw error
-      },
+    const url = nodeUrl.resolve(
+      this.baseURL,
+      this.lazyUrlTemplate.replace(/\{Chunk\}/gi, chunkNum),
     )
+    return readJSON(url, this.readFile, { defaultContent: [] })
   }
 
   async *iterateSublist(arr, from, to, inc, searchGet, testGet, path) {
     const getChunk = this.attrs.makeGetter('Chunk')
     const getSublist = this.attrs.makeGetter('Sublist')
 
-    const promises = []
+    const pendingPromises = []
     for (
       let i = this.binarySearch(arr, from, searchGet);
       i < arr.length && i >= 0 && inc * testGet(arr[i]) < inc * to;
@@ -146,8 +132,10 @@ export default class NCList {
           this.lazyChunks[chunkNum] = {}
         }
 
-        const chunkItemsP = this.chunkCache.get(chunkNum)
-        promises.push(chunkItemsP.then(item => [item, chunkNum]))
+        const chunkItemsP = this.chunkCache
+          .get(chunkNum, chunkNum)
+          .then(item => [item, chunkNum])
+        pendingPromises.push(chunkItemsP)
       } else {
         // this is just a regular feature
         yield [arr[i], path.concat(i)]
@@ -167,10 +155,11 @@ export default class NCList {
         )
     }
 
-    for (let i = 0; i < promises.length; i += 1) {
-      const [item, chunkNum] = await promises[i]
+    for (let i = 0; i < pendingPromises.length; i += 1) {
+      const [item, chunkNum] = await pendingPromises[i]
       if (item) {
         yield* this.iterateSublist(item, from, to, inc, searchGet, testGet, [
+          ...path,
           chunkNum,
         ])
       }

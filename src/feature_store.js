@@ -1,21 +1,9 @@
 import nodeUrl from 'url'
 
-// define([
-//            'JBrowse/Util',
-//            'JBrowse/Model/ArrayRepr',
-//            'JBrowse/Store/NCList',
-//            'JBrowse/Store/LazyArray'
-//        ],
-//        function(
-//            Util,
-//            ArrayRepr,
-//            GenericNCList,
-//            LazyArray
-//        ) {
-
 import GenericNCList from './nclist'
 import ArrayRepr from './array_representation'
 import LazyArray from './lazy_array'
+import { readJSON } from './util'
 
 /**
  * Implementation of SeqFeatureStore using nested containment
@@ -81,19 +69,6 @@ export default class FeatureStore {
   //   throw new Error(`HTTP ${response.status} fetching ${url}`)
   // }
 
-  async readJSON(url, options = {}) {
-    const { defaultContent = {} } = options
-    try {
-      const str = await this.readFile(url, { encoding: 'utf8' })
-      return JSON.parse(str)
-    } catch (error) {
-      if (error.code === 'ENOENT' || error.status === 404) {
-        return defaultContent
-      }
-      throw error
-    }
-  }
-
   fetchDataRoot(refName) {
     const url = nodeUrl.resolve(
       this.baseUrl,
@@ -101,7 +76,7 @@ export default class FeatureStore {
     )
 
     // fetch the trackdata
-    return this.readJSON(url).then(trackInfo =>
+    return readJSON(url, this.readFile).then(trackInfo =>
       // trackInfo = JSON.parse( trackInfo );
       this.parseTrackInfo(trackInfo, url),
     )
