@@ -95,6 +95,14 @@ describe('ensembl genes', () => {
         features.push(feature)
       }
       expect(features.length).toBe(0)
+
+      const hist2 = await store.getRegionFeatureDensities({
+        refName: '21',
+        start: 9437273,
+        end: 9439473,
+        numBins: 1000,
+      })
+      expect(hist2).toMatchSnapshot()
     })
   })
 })
