@@ -136,22 +136,6 @@ class ArrayRepr {
     return obj[adhocIndex][attr]
   }
 
-  set(obj, attr, val) {
-    if (attr in this.fields[obj[0]]) {
-      obj[this.fields[obj[0]][attr]] = val
-    } else {
-      // try lowercase
-      const lcattr = attr.toLowerCase()
-      if (lcattr in this.fields[obj[0]]) {
-        obj[this.fields[obj[0]][lcattr]] = val
-      } else {
-        const adhocIndex = this.classes[obj[0]].attributes.length + 1
-        if (adhocIndex >= obj.length) obj[adhocIndex] = {}
-        obj[adhocIndex][attr] = val
-      }
-    }
-  }
-
   makeSetter(attr) {
     const self = this
     return function set(obj, val) {
@@ -163,15 +147,6 @@ class ArrayRepr {
     const self = this
     return function get(obj) {
       return self.get(obj, attr)
-    }
-  }
-
-  makeFastSetter(attr) {
-    // can be used only if attr is guaranteed to be in
-    // the "classes" array for this object
-    const indices = this.attrIndices(attr)
-    return function set(obj, val) {
-      if (indices[obj[0]] !== undefined) obj[indices[obj[0]]] = val
     }
   }
 
@@ -270,13 +245,13 @@ class ArrayRepr {
             return this[attrIndices[this[0]]]
           }
 
-      // set
-      accessors.set.field_accessors[attrname] = !attrIndices
-        ? () => undefined
-        : v => {
-            this[attrIndices[this[0]]] = v
-            return v
-          }
+      // // set
+      // accessors.set.field_accessors[attrname] = !attrIndices
+      //   ? () => undefined
+      //   : v => {
+      //       this[attrIndices[this[0]]] = v
+      //       return v
+      //     }
     })
 
     return accessors
