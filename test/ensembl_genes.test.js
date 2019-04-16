@@ -1,4 +1,3 @@
-import { promises as fsPromises } from 'fs'
 import { RemoteFile } from 'generic-filehandle'
 import NCListStore from '../src/feature_store'
 import makeTestServer from './static_server'

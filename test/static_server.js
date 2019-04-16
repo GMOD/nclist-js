@@ -9,16 +9,6 @@ module.exports = async () => {
     const s = app.listen(port, () => resolve(s))
   })
 
-  // const fetch = require('cross-fetch')
-
-  // fetch('http://localhost:3000/')
-  //   .then(res => res.text())
-  //   .then(text => {
-  //     debugger
-  //     console.log(text)
-  //     server.close()
-  //   })
-
   return {
     url: `http://localhost:${port}/`,
     close() {
