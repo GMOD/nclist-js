@@ -1,4 +1,6 @@
 import { RemoteFile } from 'generic-filehandle'
+import fetch from 'cross-fetch'
+
 import NCListStore from '../src'
 import makeTestServer from './static_server'
 
@@ -15,7 +17,7 @@ describe('simple data', () => {
       () => ({
         baseUrl: `${testServer.url}/`,
         urlTemplate: 'volvox_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url).readFile(),
+        readFile: url => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
     [
@@ -23,7 +25,7 @@ describe('simple data', () => {
       () => ({
         baseUrl: `file://${process.cwd()}/test/data/`,
         urlTemplate: 'volvox_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url).readFile(),
+        readFile: url => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
   ]

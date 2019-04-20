@@ -1,4 +1,5 @@
 import { RemoteFile } from 'generic-filehandle'
+import fetch from 'cross-fetch'
 import NCListStore from '../src/feature_store'
 import makeTestServer from './static_server'
 
@@ -15,7 +16,7 @@ describe('ensembl genes', () => {
       () => ({
         baseUrl: `${testServer.url}/`,
         urlTemplate: 'ensembl_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url).readFile(),
+        readFile: url => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
     [
