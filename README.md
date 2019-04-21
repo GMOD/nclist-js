@@ -60,6 +60,7 @@ lists held in JSON files that are lazily read.
          the root file of each reference sequence. The reference sequence
          name will be interpolated into this string where `{refseq}` appears.
     -   `args.readFile` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** function to use for reading remote from URLs.
+    -   `args.cacheSize`   (optional, default `10`)
 
 #### getRegionFeatureDensities
 

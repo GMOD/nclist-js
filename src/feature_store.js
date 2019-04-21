@@ -1,4 +1,6 @@
 import nodeUrl from 'url'
+import QuickLRU from 'quick-lru'
+import AbortablePromiseCache from 'abortable-promise-cache'
 
 import GenericNCList from './nclist'
 import ArrayRepr from './array_representation'
@@ -27,13 +29,18 @@ function childrenfunc() {
  * @param {function} args.readFile function to use for reading remote from URLs.
  */
 export default class NCListStore {
-  constructor({ baseUrl, urlTemplate, readFile }) {
+  constructor({ baseUrl, urlTemplate, readFile, cacheSize = 10 }) {
     this.baseUrl = baseUrl
     this.urlTemplates = { root: urlTemplate }
 
     this.readFile = readFile
     if (!this.readFile)
       throw new Error(`must provide a "readFile" function argument`)
+
+    this.dataRootCache = new AbortablePromiseCache({
+      cache: new QuickLRU({ maxSize: cacheSize }),
+      fill: this.fetchDataRoot.bind(this),
+    })
   }
 
   makeNCList() {
@@ -51,9 +58,7 @@ export default class NCListStore {
   }
 
   getDataRoot(refName) {
-    if (this.dataRoot && this.dataRoot.refName === refName) return this.dataRoot
-    this.dataRoot = this.fetchDataRoot(refName)
-    return this.dataRoot
+    return this.dataRootCache.get(refName, refName)
   }
 
   fetchDataRoot(refName) {
