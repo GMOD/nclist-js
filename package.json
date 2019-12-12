@@ -1,6 +1,6 @@
 {
   "name": "@gmod/nclist",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Read features from JBrowse 1 format nested containment list JSON",
   "main": "dist/index.js",
   "repository": "github:GMOD/nclist-js",
