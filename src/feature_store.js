@@ -87,7 +87,7 @@ export default class NCListStore {
       this.loadNCList(refData, trackInfo, url)
     }
 
-    const histograms = trackInfo.histograms
+    const { histograms } = trackInfo
     if (histograms && histograms.meta) {
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
@@ -224,7 +224,7 @@ export default class NCListStore {
       // only need to decorate a feature once
       if (!feature.decorated) {
         const uniqueID = path.join(',')
-        this.decorateFeature(accessors, feature, uniqueID)
+        this.decorateFeature(accessors, feature, `${refName},${uniqueID}`)
       }
       yield feature
     }
