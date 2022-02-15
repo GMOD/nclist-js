@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { RemoteFile } from 'generic-filehandle'
 import fetch from 'cross-fetch'
 import NCListStore from '../src/feature_store'

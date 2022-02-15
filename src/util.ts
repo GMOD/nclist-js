@@ -1,3 +1,4 @@
+//@ts-nocheck
 export async function readJSON(url, readFile, options = {}) {
   const { defaultContent = {} } = options
   let str

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
@@ -34,8 +35,9 @@ export default class NCListStore {
     this.urlTemplates = { root: urlTemplate }
 
     this.readFile = readFile
-    if (!this.readFile)
+    if (!this.readFile) {
       throw new Error(`must provide a "readFile" function argument`)
+    }
 
     this.dataRootCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
@@ -169,8 +171,9 @@ export default class NCListStore {
     // rather than the 20,000)
     let histogramMeta = data._histograms.meta[0]
     for (let i = 0; i < data._histograms.meta.length; i += 1) {
-      if (basesPerBin >= data._histograms.meta[i].basesPerBin)
+      if (basesPerBin >= data._histograms.meta[i].basesPerBin) {
         histogramMeta = data._histograms.meta[i]
+      }
     }
 
     // number of bins in the server-supplied histogram for each current bin
@@ -183,7 +186,9 @@ export default class NCListStore {
       const firstServerBin = Math.floor(start / histogramMeta.basesPerBin)
       binRatio = Math.round(binRatio)
       const histogram = []
-      for (let bin = 0; bin < numBins; bin += 1) histogram[bin] = 0
+      for (let bin = 0; bin < numBins; bin += 1) {
+        histogram[bin] = 0
+      }
 
       for await (const [i, val] of histogramMeta.lazyArray.range(
         firstServerBin,

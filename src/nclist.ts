@@ -1,3 +1,4 @@
+//@ts-nocheck
 import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
@@ -11,7 +12,9 @@ export default class NCList {
       fill: this.readChunkItems.bind(this),
     })
     this.readFile = readFile
-    if (!this.readFile) throw new Error(`must provide a "readFile" function`)
+    if (!this.readFile) {
+      throw new Error(`must provide a "readFile" function`)
+    }
   }
 
   importExisting(nclist, attrs, baseURL, lazyUrlTemplate, lazyClass) {
@@ -31,13 +34,18 @@ export default class NCList {
 
     while (high - low > 1) {
       mid = (low + high) >>> 1
-      if (getter(arr[mid]) >= item) high = mid
-      else low = mid
+      if (getter(arr[mid]) >= item) {
+        high = mid
+      } else {
+        low = mid
+      }
     }
 
     // if we're iterating rightward, return the high index;
     // if leftward, the low index
-    if (getter === this.end) return high
+    if (getter === this.end) {
+      return high
+    }
     return low
   }
 
@@ -73,7 +81,7 @@ export default class NCList {
 
       // if this node has a contained sublist, process that too
       const sublist = getSublist(arr[i])
-      if (sublist)
+      if (sublist) {
         yield* this.iterateSublist(
           sublist,
           from,
@@ -83,6 +91,7 @@ export default class NCList {
           testGet,
           path.concat(i),
         )
+      }
     }
 
     for (let i = 0; i < pendingPromises.length; i += 1) {
@@ -134,7 +143,9 @@ export default class NCList {
         numBins,
         ((this.end(feat) - from) / binWidth) | 0,
       )
-      for (let bin = firstBin; bin <= lastBin; bin += 1) result[bin] += 1
+      for (let bin = firstBin; bin <= lastBin; bin += 1) {
+        result[bin] += 1
+      }
     }
     return result
   }

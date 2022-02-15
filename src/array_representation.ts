@@ -1,3 +1,4 @@
+//@ts-nocheck
 /**
  * @class ArrayRepr
  *
@@ -99,8 +100,12 @@ class ArrayRepr {
       for (let f = 0; f < classes[cl].attributes.length; f += 1) {
         this.fields[cl][classes[cl].attributes[f]] = f + 1
       }
-      if (classes[cl].proto === undefined) classes[cl].proto = {}
-      if (classes[cl].isArrayAttr === undefined) classes[cl].isArrayAttr = {}
+      if (classes[cl].proto === undefined) {
+        classes[cl].proto = {}
+      }
+      if (classes[cl].isArrayAttr === undefined) {
+        classes[cl].isArrayAttr = {}
+      }
     }
   }
 
@@ -129,24 +134,23 @@ class ArrayRepr {
 
     const adhocIndex = this.classes[obj[0]].attributes.length + 1
     if (adhocIndex >= obj.length || !(attr in obj[adhocIndex])) {
-      if (attr in this.classes[obj[0]].proto)
+      if (attr in this.classes[obj[0]].proto) {
         return this.classes[obj[0]].proto[attr]
+      }
       return undefined
     }
     return obj[adhocIndex][attr]
   }
 
   makeSetter(attr) {
-    const self = this
-    return function set(obj, val) {
-      self.set(obj, attr, val)
+    return (obj, val) => {
+      this.set(obj, attr, val)
     }
   }
 
   makeGetter(attr) {
-    const self = this
-    return function get(obj) {
-      return self.get(obj, attr)
+    return obj => {
+      return this.get(obj, attr)
     }
   }
 
@@ -155,7 +159,9 @@ class ArrayRepr {
     // the "classes" array for this object
     const indices = this.attrIndices(attr)
     return function get(obj) {
-      if (indices[obj[0]] !== undefined) return obj[indices[obj[0]]]
+      if (indices[obj[0]] !== undefined) {
+        return obj[indices[obj[0]]]
+      }
       return undefined
     }
   }
@@ -185,7 +191,9 @@ class ArrayRepr {
    * console.log( feature.get('start') + ',' + feature.get('end') );
    */
   accessors() {
-    if (!this._accessors) this._accessors = this._makeAccessors()
+    if (!this._accessors) {
+      this._accessors = this._makeAccessors()
+    }
     return this._accessors
   }
 
@@ -195,17 +203,19 @@ class ArrayRepr {
   _makeAccessors() {
     const indices = {}
 
-    let tags
-
     const accessors = {
       get(field) {
         const f = this.get.field_accessors[field.toLowerCase()]
-        if (f) return f.call(this)
+        if (f) {
+          return f.call(this)
+        }
         return undefined
       },
       set(field, val) {
         const f = this.set.field_accessors[field]
-        if (f) return f.call(this, val)
+        if (f) {
+          return f.call(this, val)
+        }
         return undefined
       },
       tags() {
@@ -231,7 +241,7 @@ class ArrayRepr {
     })
 
     // lowercase all the class attributes
-    tags = this.classes.map(c => c.attributes)
+    const tags = this.classes.map(c => c.attributes)
 
     // use that to make precalculated get and set accessors for each field
     Object.keys(indices).forEach(attrname => {

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
@@ -18,7 +19,9 @@ export default class LazyArray {
     this.length = length
     this.baseUrl = baseUrl === undefined ? '' : baseUrl
     this.readFile = readFile
-    if (!readFile) throw new Error('must provide readFile callback')
+    if (!readFile) {
+      throw new Error('must provide readFile callback')
+    }
     this.chunkCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
       fill: this.getChunk.bind(this),
