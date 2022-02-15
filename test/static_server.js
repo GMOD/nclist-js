@@ -1,4 +1,6 @@
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const getPort = require('get-port')
+//eslint-disable-next-line @typescript-eslint/no-var-requires
 const express = require('express')
 
 module.exports = async () => {
