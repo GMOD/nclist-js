@@ -1,3 +1,7 @@
+# 0.2.2
+
+- Publish src directory for better source maps
+
 # 0.2.1
 
 - Republish of 0.2.0
