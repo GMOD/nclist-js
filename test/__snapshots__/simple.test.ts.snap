@@ -1,232 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`simple data read with generic-filehandle RemoteFile with file urls 1`] = `
-Array [
-  Array [
-    0,
-    1049,
-    9000,
-    1,
-    "EDEN",
-    "EDEN",
-    "protein kinase",
-    "ctgA",
-    "example",
-    Array [
-      Array [
-        0,
-        1299,
-        9000,
-        1,
-        "EDEN.3",
-        "EDEN.3",
-        "Eden splice form 3",
-        "ctgA",
-        "example",
-        Array [
-          Array [
-            1,
-            6999,
-            7600,
-            1,
-            "1",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            1,
-            4999,
-            5500,
-            1,
-            "1",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            2,
-            7600,
-            9000,
-            1,
-            "ctgA",
-            "example",
-            "three_prime_UTR",
-          ],
-          Array [
-            2,
-            2999,
-            3300,
-            1,
-            "ctgA",
-            "example",
-            "five_prime_UTR",
-          ],
-          Array [
-            2,
-            1299,
-            1500,
-            1,
-            "ctgA",
-            "example",
-            "five_prime_UTR",
-          ],
-          Array [
-            1,
-            3300,
-            3902,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-        ],
-        "mRNA",
-      ],
-      Array [
-        0,
-        1049,
-        9000,
-        1,
-        "EDEN.1",
-        "EDEN.1",
-        "Eden splice form 1",
-        "ctgA",
-        "example",
-        Array [
-          Array [
-            2,
-            7608,
-            9000,
-            1,
-            "ctgA",
-            "example",
-            "three_prime_UTR",
-          ],
-          Array [
-            1,
-            2999,
-            3902,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            1,
-            4999,
-            5500,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            2,
-            1049,
-            1200,
-            1,
-            "ctgA",
-            "example",
-            "five_prime_UTR",
-          ],
-          Array [
-            1,
-            6999,
-            7608,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            1,
-            1200,
-            1500,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-        ],
-        "mRNA",
-      ],
-      Array [
-        0,
-        1049,
-        9000,
-        1,
-        "EDEN.2",
-        "EDEN.2",
-        "Eden splice form 2",
-        "ctgA",
-        "example",
-        Array [
-          Array [
-            1,
-            6999,
-            7608,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            1,
-            4999,
-            5500,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            1,
-            1200,
-            1500,
-            1,
-            "0",
-            "ctgA",
-            "example",
-            "CDS",
-          ],
-          Array [
-            2,
-            1049,
-            1200,
-            1,
-            "ctgA",
-            "example",
-            "five_prime_UTR",
-          ],
-          Array [
-            2,
-            7608,
-            9000,
-            1,
-            "ctgA",
-            "example",
-            "three_prime_UTR",
-          ],
-        ],
-        "mRNA",
-      ],
-    ],
-    "gene",
-  ],
-]
-`;
-
 exports[`simple data read with generic-filehandle RemoteFile with http urls 1`] = `
-Array [
-  Array [
+[
+  [
     0,
     1049,
     9000,
@@ -236,8 +12,8 @@ Array [
     "protein kinase",
     "ctgA",
     "example",
-    Array [
-      Array [
+    [
+      [
         0,
         1299,
         9000,
@@ -247,8 +23,8 @@ Array [
         "Eden splice form 3",
         "ctgA",
         "example",
-        Array [
-          Array [
+        [
+          [
             1,
             6999,
             7600,
@@ -258,7 +34,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             1,
             4999,
             5500,
@@ -268,7 +44,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             2,
             7600,
             9000,
@@ -277,7 +53,7 @@ Array [
             "example",
             "three_prime_UTR",
           ],
-          Array [
+          [
             2,
             2999,
             3300,
@@ -286,7 +62,7 @@ Array [
             "example",
             "five_prime_UTR",
           ],
-          Array [
+          [
             2,
             1299,
             1500,
@@ -295,7 +71,7 @@ Array [
             "example",
             "five_prime_UTR",
           ],
-          Array [
+          [
             1,
             3300,
             3902,
@@ -308,7 +84,7 @@ Array [
         ],
         "mRNA",
       ],
-      Array [
+      [
         0,
         1049,
         9000,
@@ -318,8 +94,8 @@ Array [
         "Eden splice form 1",
         "ctgA",
         "example",
-        Array [
-          Array [
+        [
+          [
             2,
             7608,
             9000,
@@ -328,7 +104,7 @@ Array [
             "example",
             "three_prime_UTR",
           ],
-          Array [
+          [
             1,
             2999,
             3902,
@@ -338,7 +114,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             1,
             4999,
             5500,
@@ -348,7 +124,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             2,
             1049,
             1200,
@@ -357,7 +133,7 @@ Array [
             "example",
             "five_prime_UTR",
           ],
-          Array [
+          [
             1,
             6999,
             7608,
@@ -367,7 +143,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             1,
             1200,
             1500,
@@ -380,7 +156,7 @@ Array [
         ],
         "mRNA",
       ],
-      Array [
+      [
         0,
         1049,
         9000,
@@ -390,8 +166,8 @@ Array [
         "Eden splice form 2",
         "ctgA",
         "example",
-        Array [
-          Array [
+        [
+          [
             1,
             6999,
             7608,
@@ -401,7 +177,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             1,
             4999,
             5500,
@@ -411,7 +187,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             1,
             1200,
             1500,
@@ -421,7 +197,7 @@ Array [
             "example",
             "CDS",
           ],
-          Array [
+          [
             2,
             1049,
             1200,
@@ -430,7 +206,7 @@ Array [
             "example",
             "five_prime_UTR",
           ],
-          Array [
+          [
             2,
             7608,
             9000,

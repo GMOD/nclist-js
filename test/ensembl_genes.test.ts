@@ -20,14 +20,6 @@ describe('ensembl genes', () => {
         readFile: url => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
-    [
-      'read with generic-filehandle RemoteFile with file urls',
-      () => ({
-        baseUrl: `file://${process.cwd()}/test/data/`,
-        urlTemplate: 'ensembl_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url).readFile(),
-      }),
-    ],
   ]
   testCases.forEach(([desc, params]) => {
     test(`${desc} whole dataset`, async () => {

@@ -21,14 +21,6 @@ describe('simple data', () => {
         readFile: url => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
-    [
-      'read with generic-filehandle RemoteFile with file urls',
-      () => ({
-        baseUrl: `file://${process.cwd()}/test/data/`,
-        urlTemplate: 'volvox_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url, { fetch }).readFile(),
-      }),
-    ],
   ]
   testCases.forEach(([desc, params]) => {
     test(desc, async () => {
