@@ -4,16 +4,15 @@ Read legacy JBrowse 1 nested containment list JSON.
 
 ## Status
 
-[![Build Status](https://img.shields.io/github/workflow/status/GMOD/nclist-js/Push/master?logo=github\&style=flat-query)](https://github.com/GMOD/nclist-js/actions?query=branch%3Amaster+workflow%3APush+)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/nclist-js/push.yml?branch=main&logo=github&style=for-the-badge)](https://github.com/GMOD/nclist-js/actions)
 [![Coverage Status](https://img.shields.io/codecov/c/github/GMOD/nclist-js/master.svg?style=flat-square)](https://codecov.io/gh/GMOD/nclist-js/branch/master)
-[![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm\&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
+[![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
 
 ## Usage
 
 ```javascript
 import { RemoteFile } from 'generic-filehandle'
 import NCList from '@gmod/nclist'
-
 ;(async () => {
   const store = new NCList({
     baseUrl: `http://my.server/path/to/data/dir/`,
