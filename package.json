@@ -27,7 +27,7 @@
     "test": "jest",
     "coverage": "npm test -- --coverage",
     "lint": "eslint src test",
-    "docs": "documentation readme --shallow src/feature_store.js --section API",
+    "docs": "documentation readme --shallow src/feature_store.ts --section API",
     "clean": "rimraf dist esm",
     "prebuild": "npm run docs && npm run clean && npm run lint",
     "build:esm": "tsc --target es2018 --outDir esm",
