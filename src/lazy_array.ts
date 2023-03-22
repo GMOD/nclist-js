@@ -1,5 +1,4 @@
 //@ts-nocheck
-import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
 import { readJSON } from './util'
@@ -64,7 +63,7 @@ export default class LazyArray {
   async getChunk(chunkNumber) {
     let url = this.urlTemplate.replace(/\{Chunk\}/gi, chunkNumber)
     if (this.baseUrl) {
-      url = nodeUrl.resolve(this.baseUrl, url)
+      url = new URL(url, this.baseUrl)
     }
     const data = await readJSON(url, this.readFile)
     return [chunkNumber, data]
