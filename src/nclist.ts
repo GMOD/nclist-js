@@ -1,5 +1,4 @@
 //@ts-nocheck
-import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
 import { readJSON } from './util'
@@ -50,9 +49,9 @@ export default class NCList {
   }
 
   readChunkItems(chunkNum) {
-    const url = nodeUrl.resolve(
-      this.baseURL,
+    const url = new URL(
       this.lazyUrlTemplate.replace(/\{Chunk\}/gi, chunkNum),
+      this.baseURL,
     )
     return readJSON(url, this.readFile, { defaultContent: [] })
   }

@@ -1,5 +1,4 @@
 //@ts-nocheck
-import nodeUrl from 'url'
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
 
@@ -64,9 +63,9 @@ export default class NCListStore {
   }
 
   fetchDataRoot(refName) {
-    const url = nodeUrl.resolve(
-      this.baseUrl,
+    const url = new URL(
       this.urlTemplates.root.replace(/{\s*refseq\s*}/g, refName),
+      this.baseUrl,
     )
 
     // fetch the trackdata
