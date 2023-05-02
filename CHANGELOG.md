@@ -1,3 +1,7 @@
+# 1.0.0
+
+- Remove node `url` module in favor of `new URL`
+
 # 0.2.2
 
 - Publish src directory for better source maps
