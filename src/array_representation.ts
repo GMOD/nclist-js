@@ -4,7 +4,7 @@
  *
  * Class for operating on indexed array representations of objects.
  *
- * For example, if we have a lot of objects with similar attrbutes, e.g.:
+ * For example, if we have a lot of objects with similar attributes, e.g.:
  *
  * <pre class="code">
  *     [
