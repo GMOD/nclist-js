@@ -1,7 +1,7 @@
 //@ts-nocheck
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from 'abortable-promise-cache'
-import { readJSON } from './util'
+import { newURL, readJSON } from './util'
 
 /**
  * For a JSON array that gets too large to load in one go, this class
@@ -63,7 +63,7 @@ export default class LazyArray {
   async getChunk(chunkNumber) {
     let url = this.urlTemplate.replace(/\{Chunk\}/gi, chunkNumber)
     if (this.baseUrl) {
-      url = new URL(url, this.baseUrl)
+      url = newURL(url, this.baseUrl)
     }
     const data = await readJSON(url, this.readFile)
     return [chunkNumber, data]
