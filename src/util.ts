@@ -6,7 +6,11 @@ export async function readJSON(url, readFile, options = {}) {
     str = await readFile(url, { encoding: 'utf8' })
     return JSON.parse(str)
   } catch (error) {
-    if (error.code === 'ENOENT' || error.status === 404) {
+    if (
+      error.code === 'ENOENT' ||
+      error.status === 404 ||
+      error.message.includes('404')
+    ) {
       return defaultContent
     }
     throw error
