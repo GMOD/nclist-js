@@ -5,7 +5,7 @@ import AbortablePromiseCache from 'abortable-promise-cache'
 import GenericNCList from './nclist'
 import ArrayRepr from './array_representation'
 import LazyArray from './lazy_array'
-import { readJSON } from './util'
+import { newURL, readJSON } from './util'
 
 function idfunc() {
   return this._uniqueID
@@ -63,7 +63,7 @@ export default class NCListStore {
   }
 
   fetchDataRoot(refName) {
-    const url = new URL(
+    const url = newURL(
       this.urlTemplates.root.replace(/{\s*refseq\s*}/g, refName),
       this.baseUrl,
     )
