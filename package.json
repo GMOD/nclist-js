@@ -1,6 +1,6 @@
 {
   "name": "@gmod/nclist",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Read features from JBrowse 1 format nested containment list JSON",
   "main": "dist/index.js",
   "module": "esm/index.js",
@@ -55,8 +55,8 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "@jridgewell/resolve-uri": "^3.1.2",
     "@gmod/abortable-promise-cache": "^2.0.0",
+    "@jridgewell/resolve-uri": "^3.1.2",
     "quick-lru": "^4.0.0"
   },
   "keywords": [
