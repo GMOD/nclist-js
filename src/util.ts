@@ -3,10 +3,10 @@ import resolve from '@jridgewell/resolve-uri'
 
 export async function readJSON(url, readFile, options = {}) {
   const { defaultContent = {} } = options
-  let str
   try {
-    str = await readFile(url, { encoding: 'utf8' })
-    return JSON.parse(str)
+    const str = await readFile(url, { encoding: 'utf8' })
+    const decoder = new TextDecoder('utf8')
+    return JSON.parse(decoder.decode(str))
   } catch (error) {
     if (
       error.code === 'ENOENT' ||
@@ -19,8 +19,6 @@ export async function readJSON(url, readFile, options = {}) {
     throw error
   }
 }
-
-export function foo() {}
 
 export function newURL(arg: string, base = '.') {
   return resolve(arg, base)

@@ -1,6 +1,6 @@
-//@ts-nocheck
-import { RemoteFile } from 'generic-filehandle2'
+import { expect, describe, test, afterAll, beforeAll } from 'vitest'
 import fetch from 'cross-fetch'
+import { RemoteFile } from 'generic-filehandle2'
 import NCListStore from '../src/feature_store'
 import makeTestServer from './static_server'
 

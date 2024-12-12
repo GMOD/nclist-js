@@ -93,8 +93,8 @@ export default class NCList {
       }
     }
 
-    for (let i = 0; i < pendingPromises.length; i += 1) {
-      const [item, chunkNum] = await pendingPromises[i]
+    for (const p of pendingPromises) {
+      const [item, chunkNum] = await p
       if (item) {
         yield* this.iterateSublist(item, from, to, inc, searchGet, testGet, [
           ...path,

@@ -54,8 +54,8 @@ export default class LazyArray {
     for (let chunk = firstChunk; chunk <= lastChunk; chunk += 1) {
       chunkreadFiles.push(this.chunkCache.get(chunk, chunk))
     }
-    for (let i = 0; i < chunkreadFiles.length; i += 1) {
-      const [chunkNumber, chunkData] = await chunkreadFiles[i]
+    for (const elt of chunkreadFiles) {
+      const [chunkNumber, chunkData] = await elt
       yield* this.filterChunkData(start, end, chunkNumber, chunkData)
     }
   }

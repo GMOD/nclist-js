@@ -16,7 +16,8 @@
 
 # 0.1.1
 
-- Adds refName to the feature ID to avoid collisions for code that cares about unique ID
+- Adds refName to the feature ID to avoid collisions for code that cares about
+  unique ID
 
 # 0.1.0
 

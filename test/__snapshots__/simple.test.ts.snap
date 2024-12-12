@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`simple data read with generic-filehandle RemoteFile with http urls 1`] = `
+exports[`simple data > read with generic-filehandle2 RemoteFile with http urls 1`] = `
 [
   [
     0,

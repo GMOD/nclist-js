@@ -90,6 +90,7 @@ export default class NCListStore {
 
     const { histograms } = trackInfo
     if (histograms?.meta) {
+      // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
           { ...histograms.meta[i].arrayParams, readFile: this.readFile },
@@ -159,16 +160,19 @@ export default class NCListStore {
     const statEntry = stats.find(entry => entry.basesPerBin >= basesPerBin)
 
     // The histogramMeta array describes multiple levels of histogram detail,
-    // going from the finest (smallest number of bases per bin) to the
-    // coarsest (largest number of bases per bin).
-    // We want to use coarsest histogramMeta that's at least as fine as the
-    // one we're currently rendering.
-    // TODO: take into account that the histogramMeta chosen here might not
-    // fit neatly into the current histogram (e.g., if the current histogram
-    // is at 50,000 bases/bin, and we have server histograms at 20,000
-    // and 2,000 bases/bin, then we should choose the 2,000 histogramMeta
-    // rather than the 20,000)
+    // going from the finest (smallest number of bases per bin) to the coarsest
+    // (largest number of bases per bin).
+    //
+    // We want to use coarsest histogramMeta that's at least as fine as the one
+    // we're currently rendering.
+    //
+    // TODO: take into account that the histogramMeta chosen here might not fit
+    // neatly into the current histogram (e.g., if the current histogram is at
+    // 50,000 bases/bin, and we have server histograms at 20,000 and 2,000
+    // bases/bin, then we should choose the 2,000 histogramMeta rather than the
+    // 20,000)
     let histogramMeta = data._histograms.meta[0]
+    // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < data._histograms.meta.length; i += 1) {
       if (basesPerBin >= data._histograms.meta[i].basesPerBin) {
         histogramMeta = data._histograms.meta[i]

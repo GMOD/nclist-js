@@ -1,8 +1,8 @@
-const getPort = require('get-port')
+import getPort from 'get-port'
 
-const express = require('express')
+import express from 'express'
 
-module.exports = async () => {
+export default async function staticServer() {
   const app = express()
   const port = await getPort()
   app.use(express.static('test/data'))
