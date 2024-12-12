@@ -1,6 +1,5 @@
-//eslint-disable-next-line @typescript-eslint/no-var-requires
 const getPort = require('get-port')
-//eslint-disable-next-line @typescript-eslint/no-var-requires
+
 const express = require('express')
 
 module.exports = async () => {
@@ -8,7 +7,9 @@ module.exports = async () => {
   const port = await getPort()
   app.use(express.static('test/data'))
   const server = await new Promise(resolve => {
-    const s = app.listen(port, () => resolve(s))
+    const s = app.listen(port, () => {
+      resolve(s)
+    })
   })
 
   return {

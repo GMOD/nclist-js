@@ -1,4 +1,3 @@
 //@ts-nocheck
-import NCListStore from './feature_store'
 
-export default NCListStore
+export { default } from './feature_store'

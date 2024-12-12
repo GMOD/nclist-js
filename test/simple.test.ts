@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { RemoteFile } from 'generic-filehandle'
+import { RemoteFile } from 'generic-filehandle2'
 import fetch from 'cross-fetch'
 
 import NCListStore from '../src'
@@ -14,7 +14,7 @@ afterAll(() => testServer.close())
 describe('simple data', () => {
   const testCases = [
     [
-      'read with generic-filehandle RemoteFile with http urls',
+      'read with generic-filehandle2 RemoteFile with http urls',
       () => ({
         baseUrl: `${testServer.url}/`,
         urlTemplate: 'volvox_genes/{refseq}/trackData.json',

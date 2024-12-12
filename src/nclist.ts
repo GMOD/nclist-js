@@ -50,7 +50,7 @@ export default class NCList {
 
   readChunkItems(chunkNum) {
     const url = newURL(
-      this.lazyUrlTemplate.replace(/\{Chunk\}/gi, chunkNum),
+      this.lazyUrlTemplate.replaceAll(/\{Chunk\}/gi, chunkNum),
       this.baseURL,
     )
     return readJSON(url, this.readFile, { defaultContent: [] })

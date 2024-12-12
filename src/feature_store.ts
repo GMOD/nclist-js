@@ -64,7 +64,7 @@ export default class NCListStore {
 
   fetchDataRoot(refName) {
     const url = newURL(
-      this.urlTemplates.root.replace(/{\s*refseq\s*}/g, refName),
+      this.urlTemplates.root.replaceAll(/{\s*refseq\s*}/g, refName),
       this.baseUrl,
     )
 
@@ -89,7 +89,7 @@ export default class NCListStore {
     }
 
     const { histograms } = trackInfo
-    if (histograms && histograms.meta) {
+    if (histograms?.meta) {
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
           { ...histograms.meta[i].arrayParams, readFile: this.readFile },
@@ -218,7 +218,7 @@ export default class NCListStore {
    */
   async *getFeatures({ refName, start, end }) {
     const data = await this.getDataRoot(refName)
-    const accessors = data.attrs && data.attrs.accessors()
+    const accessors = data.attrs?.accessors()
     for await (const [feature, path] of data.nclist.iterate(start, end)) {
       // the unique ID is a stringification of the path in the
       // NCList where the feature lives; it's unique across the

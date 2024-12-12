@@ -61,7 +61,7 @@ export default class LazyArray {
   }
 
   async getChunk(chunkNumber) {
-    let url = this.urlTemplate.replace(/\{Chunk\}/gi, chunkNumber)
+    let url = this.urlTemplate.replaceAll(/\{Chunk\}/gi, chunkNumber)
     if (this.baseUrl) {
       url = newURL(url, this.baseUrl)
     }

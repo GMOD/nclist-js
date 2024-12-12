@@ -22,6 +22,6 @@ export async function readJSON(url, readFile, options = {}) {
 
 export function foo() {}
 
-export function newURL(arg: string, base?: string = '.') {
+export function newURL(arg: string, base = '.') {
   return resolve(arg, base)
 }

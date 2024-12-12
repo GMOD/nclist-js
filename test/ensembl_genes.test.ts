@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { RemoteFile } from 'generic-filehandle'
+import { RemoteFile } from 'generic-filehandle2'
 import fetch from 'cross-fetch'
 import NCListStore from '../src/feature_store'
 import makeTestServer from './static_server'
@@ -13,7 +13,7 @@ afterAll(() => testServer.close())
 describe('ensembl genes', () => {
   const testCases = [
     [
-      'read with generic-filehandle RemoteFile with http urls',
+      'read with generic-filehandle2 RemoteFile with http urls',
       () => ({
         baseUrl: `${testServer.url}/`,
         urlTemplate: 'ensembl_genes/{refseq}/trackData.json',
