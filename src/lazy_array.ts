@@ -1,7 +1,7 @@
 //@ts-nocheck
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import { newURL, readJSON } from './util'
+import { newURL, readJSON } from './util.ts'
 
 /**
  * For a JSON array that gets too large to load in one go, this class

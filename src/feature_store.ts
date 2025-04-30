@@ -2,10 +2,10 @@
 import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
 
-import GenericNCList from './nclist'
-import ArrayRepr from './array_representation'
-import LazyArray from './lazy_array'
-import { newURL, readJSON } from './util'
+import GenericNCList from './nclist.ts'
+import ArrayRepr from './array_representation.ts'
+import LazyArray from './lazy_array.ts'
+import { newURL, readJSON } from './util.ts'
 
 function idfunc() {
   return this._uniqueID
