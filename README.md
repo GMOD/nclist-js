@@ -6,7 +6,7 @@ Read legacy JBrowse 1 nested containment list JSON.
 
 [![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/nclist-js/push.yml?branch=master)](https://github.com/GMOD/nclist-js/actions)
 [![Coverage Status](https://img.shields.io/codecov/c/github/GMOD/nclist-js/master.svg?style=flat-square)](https://codecov.io/gh/GMOD/nclist-js/branch/master)
-[![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
+[![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm\&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
 
 ## Usage
 
@@ -40,36 +40,28 @@ import NCList from '@gmod/nclist'
 
 #### Table of Contents
 
-- [NCListStore](#ncliststore)
-  - [Parameters](#parameters)
-  - [getRegionFeatureDensities](#getregionfeaturedensities)
-    - [Parameters](#parameters-1)
-  - [getFeatures](#getfeatures)
-    - [Parameters](#parameters-2)
+*   [NCListStore](#ncliststore)
+    *   [Parameters](#parameters)
+    *   [getRegionFeatureDensities](#getregionfeaturedensities)
+        *   [Parameters](#parameters-1)
+    *   [getFeatures](#getfeatures)
+        *   [Parameters](#parameters-2)
 
 ### NCListStore
 
-Sequence feature store using nested containment lists held in JSON files that
-are lazily read.
+Sequence feature store using nested containment
+lists held in JSON files that are lazily read.
 
 #### Parameters
 
-- `args`
-  **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
-  constructor args
+*   `args` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** constructor args
 
-  - `args.baseUrl`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    base URL for resolving relative URLs
-  - `args.urlTemplate`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    Template string for the root file of each reference sequence. The reference
-    sequence name will be interpolated into this string where `{refseq}`
-    appears.
-  - `args.readFile`
-    **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)**
-    function to use for reading remote from URLs.
-  - `args.cacheSize` (optional, default `10`)
+    *   `args.baseUrl` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** base URL for resolving relative URLs
+    *   `args.urlTemplate` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Template string for
+        the root file of each reference sequence. The reference sequence
+        name will be interpolated into this string where `{refseq}` appears.
+    *   `args.readFile` **[function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** function to use for reading remote from URLs.
+    *   `args.cacheSize`   (optional, default `10`)
 
 #### getRegionFeatureDensities
 
@@ -77,28 +69,16 @@ fetch binned counts of feature coverage in the given region.
 
 ##### Parameters
 
-- `query`
-  **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+*   `query` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
-  - `query.refName`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    reference sequence name
-  - `query.start`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    region start
-  - `query.end`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    region end
-  - `query.numBins`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    number of bins desired in the feature counts
-  - `query.basesPerBin`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    number of bp desired in each feature counting bin
+    *   `query.refName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** reference sequence name
+    *   `query.start` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** region start
+    *   `query.end` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** region end
+    *   `query.numBins` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** number of bins desired in the feature counts
+    *   `query.basesPerBin` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** number of bp desired in each feature counting bin
 
-Returns
-**[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**
-as: `{ bins: hist, stats: statEntry }`
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** as:
+`{ bins: hist, stats: statEntry }`
 
 #### getFeatures
 
@@ -107,15 +87,8 @@ yielding feature objects.
 
 ##### Parameters
 
-- `args`
-  **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
+*   `args` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)**&#x20;
 
-  - `args.refName`
-    **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**
-    reference sequence name
-  - `args.start`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    start of region. 0-based half-open.
-  - `args.end`
-    **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
-    end of region. 0-based half-open.
+    *   `args.refName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** reference sequence name
+    *   `args.start` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** start of region. 0-based half-open.
+    *   `args.end` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** end of region. 0-based half-open.
