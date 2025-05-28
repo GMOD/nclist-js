@@ -1,8 +1,9 @@
-import { expect, describe, test, afterAll, beforeAll } from 'vitest'
 import fetch from 'cross-fetch'
 import { RemoteFile } from 'generic-filehandle2'
-import NCListStore from '../src/feature_store'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+
 import makeTestServer from './static_server'
+import NCListStore from '../src/feature_store'
 
 let testServer
 beforeAll(async () => {

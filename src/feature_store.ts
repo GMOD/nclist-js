@@ -1,10 +1,10 @@
 //@ts-nocheck
-import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
+import QuickLRU from 'quick-lru'
 
-import GenericNCList from './nclist.ts'
 import ArrayRepr from './array_representation.ts'
 import LazyArray from './lazy_array.ts'
+import GenericNCList from './nclist.ts'
 import { newURL, readJSON } from './util.ts'
 
 function idfunc() {

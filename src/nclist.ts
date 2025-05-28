@@ -1,6 +1,7 @@
 //@ts-nocheck
-import QuickLRU from 'quick-lru'
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
+import QuickLRU from 'quick-lru'
+
 import { newURL, readJSON } from './util.ts'
 
 export default class NCList {

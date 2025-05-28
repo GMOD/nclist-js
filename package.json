@@ -50,6 +50,7 @@
     "cross-fetch": "^4.1.0",
     "documentation": "^14.0.1",
     "eslint": "^9.5.0",
+    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-unicorn": "^59.0.0",
     "express": "^5.1.0",
     "generic-filehandle2": "^2.0.1",

@@ -1,6 +1,5 @@
-import getPort from 'get-port'
-
 import express from 'express'
+import getPort from 'get-port'
 
 export default async function staticServer() {
   const app = express()
