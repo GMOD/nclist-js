@@ -43,6 +43,7 @@ export default tseslint.config(
       'no-empty': 'off',
       semi: ['error', 'never'],
 
+      'unicorn/text-encoding-identifier-case': 'off',
       'unicorn/no-new-array': 'off',
       'unicorn/no-empty-file': 'off',
       'unicorn/prefer-type-error': 'off',
