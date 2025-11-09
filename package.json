@@ -46,6 +46,7 @@
     "postversion": "git push --follow-tags"
   },
   "devDependencies": {
+    "@types/express": "^5.0.5",
     "@vitest/coverage-v8": "^4.0.6",
     "cross-fetch": "^4.1.0",
     "documentation": "^14.0.1",
