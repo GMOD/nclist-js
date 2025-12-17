@@ -1,6 +1,6 @@
 //@ts-nocheck
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import QuickLRU from 'quick-lru'
+import QuickLRU from '@jbrowse/quick-lru'
 
 import { newURL, readJSON } from './util.ts'
 

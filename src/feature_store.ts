@@ -1,6 +1,6 @@
 //@ts-nocheck
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import QuickLRU from 'quick-lru'
+import QuickLRU from '@jbrowse/quick-lru'
 
 import ArrayRepr from './array_representation.ts'
 import LazyArray from './lazy_array.ts'
