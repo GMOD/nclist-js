@@ -39,7 +39,7 @@ export default defineConfig(
         },
       ],
 
-      'no-underscore-dangle': 0,
+      'no-underscore-dangle': 'off',
       curly: 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-empty': 'off',
@@ -87,9 +87,8 @@ export default defineConfig(
       'unicorn/prefer-number-properties': 'off',
       'unicorn/no-process-exit': 'off',
 
-      '@typescript-eslint/no-explicit-any': 0,
-      '@typescript-eslint/explicit-module-boundary-types': 0,
-      '@typescript-eslint/ban-ts-comment': 0,
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/ban-ts-comment': ['error', { 'ts-expect-error': 'allow-with-description', 'ts-ignore': true }],
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',

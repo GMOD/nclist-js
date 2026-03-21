@@ -1,23 +1,34 @@
-//@ts-nocheck
 import AbortablePromiseCache from '@gmod/abortable-promise-cache'
 import QuickLRU from '@jbrowse/quick-lru'
 
 import { newURL, readJSON } from './util.ts'
 
+import type ArrayRepr from './array_representation.ts'
+
+type ReadFileFn = (url: string, opts: { encoding: string }) => Promise<string | Uint8Array>
+type Getter = (obj: unknown[]) => unknown
+
 export default class NCList {
-  constructor({ readFile, cacheSize = 100 }) {
+  topList: unknown[]
+  chunkCache: AbortablePromiseCache<number, unknown[]>
+  readFile: ReadFileFn
+  attrs!: ArrayRepr
+  start!: Getter
+  end!: Getter
+  lazyClass!: number
+  baseURL!: string
+  lazyUrlTemplate!: string
+
+  constructor({ readFile, cacheSize = 100 }: { readFile: ReadFileFn; cacheSize?: number }) {
     this.topList = []
     this.chunkCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
       fill: this.readChunkItems.bind(this),
     })
     this.readFile = readFile
-    if (!this.readFile) {
-      throw new Error(`must provide a "readFile" function`)
-    }
   }
 
-  importExisting(nclist, attrs, baseURL, lazyUrlTemplate, lazyClass) {
+  importExisting(nclist: unknown[], attrs: ArrayRepr, baseURL: string, lazyUrlTemplate: string, lazyClass: number) {
     this.topList = nclist
     this.attrs = attrs
     this.start = attrs.makeFastGetter('Start')
@@ -27,14 +38,14 @@ export default class NCList {
     this.lazyUrlTemplate = lazyUrlTemplate
   }
 
-  binarySearch(arr, item, getter) {
+  binarySearch(arr: unknown[][], item: number, getter: Getter) {
     let low = -1
     let high = arr.length
     let mid
 
     while (high - low > 1) {
       mid = (low + high) >>> 1
-      if (getter(arr[mid]) >= item) {
+      if ((getter(arr[mid]) as number) >= item) {
         high = mid
       } else {
         low = mid
@@ -49,30 +60,38 @@ export default class NCList {
     return low
   }
 
-  readChunkItems(chunkNum) {
+  readChunkItems(chunkNum: number) {
     const url = newURL(
-      this.lazyUrlTemplate.replaceAll(/\{Chunk\}/gi, chunkNum),
+      this.lazyUrlTemplate.replaceAll(/\{Chunk\}/gi, String(chunkNum)),
       this.baseURL,
     )
-    return readJSON(url, this.readFile, { defaultContent: [] })
+    return readJSON(url, this.readFile, { defaultContent: [] }) as Promise<unknown[]>
   }
 
-  async *iterateSublist(arr, from, to, inc, searchGet, testGet, path) {
+  async *iterateSublist(
+    arr: unknown[][],
+    from: number,
+    to: number,
+    inc: number,
+    searchGet: Getter,
+    testGet: Getter,
+    path: number[],
+  ): AsyncGenerator<[unknown[], number[]]> {
     const getChunk = this.attrs.makeGetter('Chunk')
     const getSublist = this.attrs.makeGetter('Sublist')
 
-    const pendingPromises = []
+    const pendingPromises: Promise<[unknown[], number]>[] = []
     for (
       let i = this.binarySearch(arr, from, searchGet);
-      i < arr.length && i >= 0 && inc * testGet(arr[i]) < inc * to;
+      i < arr.length && i >= 0 && inc * (testGet(arr[i]) as number) < inc * to;
       i += inc
     ) {
       if (arr[i][0] === this.lazyClass) {
         // this is a lazily-loaded chunk of the nclist
-        const chunkNum = getChunk(arr[i])
+        const chunkNum = getChunk(arr[i]) as number
         const chunkItemsP = this.chunkCache
-          .get(chunkNum, chunkNum)
-          .then(item => [item, chunkNum])
+          .get(String(chunkNum), chunkNum)
+          .then(item => [item, chunkNum] as [unknown[], number])
         pendingPromises.push(chunkItemsP)
       } else {
         // this is just a regular feature
@@ -80,7 +99,7 @@ export default class NCList {
       }
 
       // if this node has a contained sublist, process that too
-      const sublist = getSublist(arr[i])
+      const sublist = getSublist(arr[i]) as unknown[][] | undefined
       if (sublist) {
         yield* this.iterateSublist(
           sublist,
@@ -96,16 +115,14 @@ export default class NCList {
 
     for (const p of pendingPromises) {
       const [item, chunkNum] = await p
-      if (item) {
-        yield* this.iterateSublist(item, from, to, inc, searchGet, testGet, [
-          ...path,
-          chunkNum,
-        ])
-      }
+      yield* this.iterateSublist(item as unknown[][], from, to, inc, searchGet, testGet, [
+        ...path,
+        chunkNum,
+      ])
     }
   }
 
-  async *iterate(from, to) {
+  async *iterate(from: number, to: number): AsyncGenerator<[unknown[], number[]]> {
     // calls the given function once for each of the
     // intervals that overlap the given interval
     // if from <= to, iterates left-to-right, otherwise iterates right-to-left
@@ -119,7 +136,7 @@ export default class NCList {
 
     if (this.topList.length > 0) {
       yield* this.iterateSublist(
-        this.topList,
+        this.topList as unknown[][],
         from,
         to,
         inc,
@@ -130,18 +147,18 @@ export default class NCList {
     }
   }
 
-  async histogram(from, to, numBins) {
+  async histogram(from: number, to: number, numBins: number) {
     // calls callback with a histogram of the feature density
     // in the given interval
 
     const result = new Array(numBins)
     result.fill(0)
     const binWidth = (to - from) / numBins
-    for await (const feat of this.iterate(from, to)) {
-      const firstBin = Math.max(0, ((this.start(feat) - from) / binWidth) | 0)
+    for await (const [feat] of this.iterate(from, to)) {
+      const firstBin = Math.max(0, (((this.start(feat) as number) - from) / binWidth) | 0)
       const lastBin = Math.min(
         numBins,
-        ((this.end(feat) - from) / binWidth) | 0,
+        (((this.end(feat) as number) - from) / binWidth) | 0,
       )
       for (let bin = firstBin; bin <= lastBin; bin += 1) {
         result[bin] += 1
