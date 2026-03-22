@@ -104,7 +104,9 @@ export interface FieldAccessors {
     field_accessors: Partial<Record<string, (this: ArrayObj) => unknown>>
   }
   set: ((this: ArrayObj, field: string, val: unknown) => unknown) & {
-    field_accessors: Partial<Record<string, (this: ArrayObj, val: unknown) => unknown>>
+    field_accessors: Partial<
+      Record<string, (this: ArrayObj, val: unknown) => unknown>
+    >
   }
   tags: (this: ArrayObj) => string[]
 }
@@ -157,7 +159,10 @@ class ArrayRepr {
 
     const adhocIndex = this.classes[classIdx].attributes.length + 1
     const proto = this.classes[classIdx].proto ?? {}
-    if (adhocIndex >= obj.length || !(attr in (obj[adhocIndex] as Record<string, unknown>))) {
+    if (
+      adhocIndex >= obj.length ||
+      !(attr in (obj[adhocIndex] as Record<string, unknown>))
+    ) {
       if (attr in proto) {
         return proto[attr]
       }
@@ -235,8 +240,12 @@ class ArrayRepr {
   _makeAccessors(): FieldAccessors {
     const indices: Record<string, (number | undefined)[]> = {}
 
-    const getFieldAccessors: Partial<Record<string, (this: ArrayObj) => unknown>> = {}
-    const setFieldAccessors: Partial<Record<string, (this: ArrayObj, val: unknown) => unknown>> = {}
+    const getFieldAccessors: Partial<
+      Record<string, (this: ArrayObj) => unknown>
+    > = {}
+    const setFieldAccessors: Partial<
+      Record<string, (this: ArrayObj, val: unknown) => unknown>
+    > = {}
 
     const getFn = function (this: ArrayObj, field: string) {
       const f = getFieldAccessors[field.toLowerCase()]
@@ -245,7 +254,8 @@ class ArrayRepr {
       }
       return undefined
     } as FieldAccessors['get']
-    getFn.field_accessors = getFieldAccessors as FieldAccessors['get']['field_accessors']
+    getFn.field_accessors =
+      getFieldAccessors as FieldAccessors['get']['field_accessors']
 
     const setFn = function (this: ArrayObj, field: string, val: unknown) {
       const f = setFieldAccessors[field]
@@ -254,7 +264,8 @@ class ArrayRepr {
       }
       return undefined
     } as FieldAccessors['set']
-    setFn.field_accessors = setFieldAccessors as FieldAccessors['set']['field_accessors']
+    setFn.field_accessors =
+      setFieldAccessors as FieldAccessors['set']['field_accessors']
 
     // make a data structure as: { attr_name: [offset,offset,offset], }
     // that will be convenient for finding the location of the attr

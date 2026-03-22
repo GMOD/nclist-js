@@ -8,7 +8,10 @@ import { newURL, readJSON } from './util.ts'
 
 import type { FieldAccessors } from './array_representation.ts'
 
-type ReadFileFn = (url: string, opts: { encoding: string }) => Promise<string | Uint8Array>
+type ReadFileFn = (
+  url: string,
+  opts: { encoding: string },
+) => Promise<string | Uint8Array>
 
 type NCFeature = unknown[] & {
   get?: FieldAccessors['get']
@@ -53,7 +56,11 @@ interface TrackInfo {
   featureCount?: number
   intervals?: {
     nclist: unknown[]
-    classes: { attributes: string[]; proto?: Record<string, unknown>; isArrayAttr?: Record<string, boolean> }[]
+    classes: {
+      attributes: string[]
+      proto?: Record<string, unknown>
+      isArrayAttr?: Record<string, boolean>
+    }[]
     urlTemplate: string
     lazyClass: number
   }
@@ -103,7 +110,11 @@ export default class NCListStore {
     return new GenericNCList({ readFile: this.readFile })
   }
 
-  loadNCList(refData: RefData, intervals: NonNullable<TrackInfo['intervals']>, listUrl: string) {
+  loadNCList(
+    refData: RefData,
+    intervals: NonNullable<TrackInfo['intervals']>,
+    listUrl: string,
+  ) {
     const attrs = refData.attrs
     if (attrs) {
       refData.nclist.importExisting(
@@ -151,7 +162,13 @@ export default class NCListStore {
       // eslint-disable-next-line @typescript-eslint/prefer-for-of
       for (let i = 0; i < histograms.meta.length; i += 1) {
         histograms.meta[i].lazyArray = new LazyArray(
-          { ...histograms.meta[i].arrayParams, readFile: this.readFile } as { urlTemplate: string; chunkSize: number; length: number; cacheSize?: number; readFile: ReadFileFn },
+          { ...histograms.meta[i].arrayParams, readFile: this.readFile } as {
+            urlTemplate: string
+            chunkSize: number
+            length: number
+            cacheSize?: number
+            readFile: ReadFileFn
+          },
           url,
         )
       }
@@ -160,8 +177,12 @@ export default class NCListStore {
 
     // parse any strings in the histogram data that look like numbers
     if (refData._histograms) {
-      Object.keys(refData._histograms as unknown as Record<string, unknown>).forEach(key => {
-        const entries = (refData._histograms as unknown as Record<string, unknown>)[key]
+      Object.keys(
+        refData._histograms as unknown as Record<string, unknown>,
+      ).forEach(key => {
+        const entries = (
+          refData._histograms as unknown as Record<string, unknown>
+        )[key]
         if (Array.isArray(entries)) {
           entries.forEach(entry => {
             Object.keys(entry as Record<string, unknown>).forEach(key2 => {
@@ -228,7 +249,9 @@ export default class NCListStore {
 
     // pick the relevant entry in our pre-calculated stats
     const stats = histograms?.stats ?? []
-    const statEntry = stats.find(entry => entry.basesPerBin >= resolvedBasesPerBin)
+    const statEntry = stats.find(
+      entry => entry.basesPerBin >= resolvedBasesPerBin,
+    )
 
     if (!histograms) {
       const hist = await data.nclist.histogram(start, end, resolvedNumBins)
@@ -277,7 +300,8 @@ export default class NCListStore {
           // this will count features that span the boundaries of
           // the original histogram multiple times, so it's not
           // perfectly quantitative.  Hopefully it's still useful, though.
-          histogram[Math.floor(((i as number) - firstServerBin) / binRatio)] += val as number
+          histogram[Math.floor(((i as number) - firstServerBin) / binRatio)] +=
+            val as number
         }
       }
       return { bins: histogram, stats: statEntry }
@@ -298,7 +322,15 @@ export default class NCListStore {
    * @param {number} args.end end of region. 0-based half-open.
    * @yields {object}
    */
-  async *getFeatures({ refName, start, end }: { refName: string; start: number; end: number }) {
+  async *getFeatures({
+    refName,
+    start,
+    end,
+  }: {
+    refName: string
+    start: number
+    end: number
+  }) {
     const data = await this.getDataRoot(refName)
     const accessors = data.attrs?.accessors()
     for await (const [feature, path] of data.nclist.iterate(start, end)) {
@@ -332,7 +364,10 @@ export default class NCListStore {
     feature._parent = parent
     feature.parent = parentfunc
     feature.children = childrenfunc
-    const subfeatures = accessors.get.call(feature as unknown as NCFeature[], 'subfeatures') as NCFeature[] | undefined
+    const subfeatures = accessors.get.call(
+      feature as unknown as NCFeature[],
+      'subfeatures',
+    ) as NCFeature[] | undefined
     ;(subfeatures || []).forEach((f, i) => {
       this.decorateFeature(accessors, f, `${id}-${i}`, feature)
     })

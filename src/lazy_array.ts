@@ -3,7 +3,10 @@ import QuickLRU from '@jbrowse/quick-lru'
 
 import { newURL, readJSON } from './util.ts'
 
-type ReadFileFn = (url: string, opts: { encoding: string }) => Promise<string | Uint8Array>
+type ReadFileFn = (
+  url: string,
+  opts: { encoding: string },
+) => Promise<string | Uint8Array>
 
 interface LazyArrayArgs {
   urlTemplate: string
@@ -27,7 +30,13 @@ export default class LazyArray {
   chunkCache: AbortablePromiseCache<number, [number, unknown[]]>
 
   constructor(
-    { urlTemplate, chunkSize, length, cacheSize = 100, readFile }: LazyArrayArgs,
+    {
+      urlTemplate,
+      chunkSize,
+      length,
+      cacheSize = 100,
+      readFile,
+    }: LazyArrayArgs,
     baseUrl: string,
   ) {
     this.urlTemplate = urlTemplate
@@ -47,7 +56,11 @@ export default class LazyArray {
    * @param callback callback, gets called with (i, value, param)
    * @param param (optional) callback will get this as its last parameter
    */
-  index(i: number, callback: (i: number, val: unknown, param: unknown) => void, param: unknown) {
+  index(
+    i: number,
+    callback: (i: number, val: unknown, param: unknown) => void,
+    param: unknown,
+  ) {
     this.range(i, i, callback, undefined, param)
   }
 
@@ -83,7 +96,12 @@ export default class LazyArray {
     return [chunkNumber, data]
   }
 
-  *filterChunkData(queryStart: number, queryEnd: number, chunkNumber: number, chunkData: unknown[]) {
+  *filterChunkData(
+    queryStart: number,
+    queryEnd: number,
+    chunkNumber: number,
+    chunkData: unknown[],
+  ) {
     // index (in the overall lazy array) of the first position in this chunk
     const firstIndex = chunkNumber * this.chunkSize
     const chunkStart = Math.max(0, queryStart - firstIndex)

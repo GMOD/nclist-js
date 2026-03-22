@@ -5,7 +5,10 @@ import { newURL, readJSON } from './util.ts'
 
 import type ArrayRepr from './array_representation.ts'
 
-type ReadFileFn = (url: string, opts: { encoding: string }) => Promise<string | Uint8Array>
+type ReadFileFn = (
+  url: string,
+  opts: { encoding: string },
+) => Promise<string | Uint8Array>
 type Getter = (obj: unknown[]) => unknown
 
 export default class NCList {
@@ -19,7 +22,13 @@ export default class NCList {
   baseURL!: string
   lazyUrlTemplate!: string
 
-  constructor({ readFile, cacheSize = 100 }: { readFile: ReadFileFn; cacheSize?: number }) {
+  constructor({
+    readFile,
+    cacheSize = 100,
+  }: {
+    readFile: ReadFileFn
+    cacheSize?: number
+  }) {
     this.topList = []
     this.chunkCache = new AbortablePromiseCache({
       cache: new QuickLRU({ maxSize: cacheSize }),
@@ -28,7 +37,13 @@ export default class NCList {
     this.readFile = readFile
   }
 
-  importExisting(nclist: unknown[], attrs: ArrayRepr, baseURL: string, lazyUrlTemplate: string, lazyClass: number) {
+  importExisting(
+    nclist: unknown[],
+    attrs: ArrayRepr,
+    baseURL: string,
+    lazyUrlTemplate: string,
+    lazyClass: number,
+  ) {
     this.topList = nclist
     this.attrs = attrs
     this.start = attrs.makeFastGetter('Start')
@@ -65,7 +80,9 @@ export default class NCList {
       this.lazyUrlTemplate.replaceAll(/\{Chunk\}/gi, String(chunkNum)),
       this.baseURL,
     )
-    return readJSON(url, this.readFile, { defaultContent: [] }) as Promise<unknown[]>
+    return readJSON(url, this.readFile, { defaultContent: [] }) as Promise<
+      unknown[]
+    >
   }
 
   async *iterateSublist(
@@ -115,14 +132,22 @@ export default class NCList {
 
     for (const p of pendingPromises) {
       const [item, chunkNum] = await p
-      yield* this.iterateSublist(item as unknown[][], from, to, inc, searchGet, testGet, [
-        ...path,
-        chunkNum,
-      ])
+      yield* this.iterateSublist(
+        item as unknown[][],
+        from,
+        to,
+        inc,
+        searchGet,
+        testGet,
+        [...path, chunkNum],
+      )
     }
   }
 
-  async *iterate(from: number, to: number): AsyncGenerator<[unknown[], number[]]> {
+  async *iterate(
+    from: number,
+    to: number,
+  ): AsyncGenerator<[unknown[], number[]]> {
     // calls the given function once for each of the
     // intervals that overlap the given interval
     // if from <= to, iterates left-to-right, otherwise iterates right-to-left
@@ -155,7 +180,10 @@ export default class NCList {
     result.fill(0)
     const binWidth = (to - from) / numBins
     for await (const [feat] of this.iterate(from, to)) {
-      const firstBin = Math.max(0, (((this.start(feat) as number) - from) / binWidth) | 0)
+      const firstBin = Math.max(
+        0,
+        (((this.start(feat) as number) - from) / binWidth) | 0,
+      )
       const lastBin = Math.min(
         numBins,
         (((this.end(feat) as number) - from) / binWidth) | 0,
