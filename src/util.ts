@@ -75,9 +75,9 @@ function isRelative(input: string) {
 function parseAbsoluteUrl(input: string): Url {
   const match = urlRegex.exec(input)!
   return makeUrl(
-    match[1]!,
+    match[1] ?? '',
     match[2] ?? '',
-    match[3]!,
+    match[3] ?? '',
     match[4] ?? '',
     match[5] ?? '/',
     match[6] ?? '',
@@ -86,7 +86,7 @@ function parseAbsoluteUrl(input: string): Url {
 }
 function parseFileUrl(input: string): Url {
   const match = fileRegex.exec(input)!
-  const path = match[2]!
+  const path = match[2] ?? ''
   return makeUrl(
     'file:',
     '',
@@ -162,7 +162,7 @@ function normalizePath(url: Url, type: UrlType) {
   let positive = 0
   let addTrailingSlash = false
   for (let i = 1; i < pieces.length; i++) {
-    const piece = pieces[i]!
+    const piece = pieces[i]
     if (!piece) {
       addTrailingSlash = true
       continue

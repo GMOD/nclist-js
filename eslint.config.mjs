@@ -30,6 +30,15 @@ export default defineConfig(
   importPlugin.flatConfigs.recommended,
   eslintPluginUnicorn.configs.recommended,
   {
+    // TypeScript doesn't type optional regex capture groups as `string | undefined`,
+    // causing false positives for `??` and `!` patterns in URL parsing code
+    files: ['src/util.ts'],
+    rules: {
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+    },
+  },
+  {
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'warn',
@@ -41,6 +50,7 @@ export default defineConfig(
 
       'no-underscore-dangle': 'off',
       curly: 'error',
+      eqeqeq: 'error',
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-empty': 'off',
       semi: ['error', 'never'],
@@ -52,7 +62,6 @@ export default defineConfig(
       'unicorn/prefer-modern-math-apis': 'off',
       'unicorn/prefer-node-protocol': 'off',
       'unicorn/no-unreadable-array-destructuring': 'off',
-      'unicorn/no-abusive-eslint-disable': 'off',
       'unicorn/no-array-callback-reference': 'off',
       'unicorn/number-literal-case': 'off',
       'unicorn/prefer-add-event-listener': 'off',
@@ -62,15 +71,13 @@ export default defineConfig(
       'unicorn/no-lonely-if': 'off',
       'unicorn/consistent-destructuring': 'off',
       'unicorn/prefer-module': 'off',
-      'unicorn/prefer-optional-catch-binding': 'off',
       'unicorn/no-useless-undefined': 'off',
-      'unicorn/no-null': 'off',
-      'unicorn/no-nested-ternary': 'off',
       'unicorn/filename-case': 'off',
       'unicorn/catch-error-name': 'off',
       'unicorn/prevent-abbreviations': 'off',
       'unicorn/prefer-code-point': 'off',
       'unicorn/numeric-separators-style': 'off',
+      'unicorn/no-nested-ternary': 'off',
       'unicorn/no-array-for-each': 'off',
       'unicorn/prefer-spread': 'off',
       'unicorn/explicit-length-check': 'off',
@@ -87,7 +94,7 @@ export default defineConfig(
       'unicorn/prefer-number-properties': 'off',
       'unicorn/no-process-exit': 'off',
 
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/ban-ts-comment': [
         'error',
         { 'ts-expect-error': 'allow-with-description', 'ts-ignore': true },
@@ -97,10 +104,11 @@ export default defineConfig(
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/prefer-nullish-coalescing': 'off',
-      '@typescript-eslint/require-await': 'off',
       '@typescript-eslint/restrict-template-expressions': 'off',
       '@typescript-eslint/restrict-plus-operands': 'off',
+      'unicorn/prefer-ternary': 'off',
 
       'import/no-unresolved': 'off',
       'import/extensions': ['error', 'ignorePackages'],
