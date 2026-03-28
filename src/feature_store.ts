@@ -159,10 +159,9 @@ export default class NCListStore {
 
     const { histograms } = trackInfo
     if (histograms?.meta) {
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < histograms.meta.length; i += 1) {
-        histograms.meta[i].lazyArray = new LazyArray(
-          { ...histograms.meta[i].arrayParams, readFile: this.readFile } as {
+      for (const meta of histograms.meta) {
+        meta.lazyArray = new LazyArray(
+          { ...meta.arrayParams, readFile: this.readFile } as {
             urlTemplate: string
             chunkSize: number
             length: number
@@ -270,11 +269,10 @@ export default class NCListStore {
     // 50,000 bases/bin, and we have server histograms at 20,000 and 2,000
     // bases/bin, then we should choose the 2,000 histogramMeta rather than the
     // 20,000)
-    let histogramMeta = histograms.meta[0]
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < histograms.meta.length; i += 1) {
-      if (resolvedBasesPerBin >= histograms.meta[i].basesPerBin) {
-        histogramMeta = histograms.meta[i]
+    let histogramMeta = histograms.meta[0]!
+    for (const meta of histograms.meta) {
+      if (resolvedBasesPerBin >= meta.basesPerBin) {
+        histogramMeta = meta
       }
     }
 
@@ -300,7 +298,7 @@ export default class NCListStore {
           // this will count features that span the boundaries of
           // the original histogram multiple times, so it's not
           // perfectly quantitative.  Hopefully it's still useful, though.
-          histogram[Math.floor(((i as number) - firstServerBin) / binRatio)] +=
+          histogram[Math.floor(((i as number) - firstServerBin) / binRatio)]! +=
             val as number
         }
       }

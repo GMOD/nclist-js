@@ -60,7 +60,7 @@ export default class NCList {
 
     while (high - low > 1) {
       mid = (low + high) >>> 1
-      if ((getter(arr[mid]) as number) >= item) {
+      if ((getter(arr[mid]!) as number) >= item) {
         high = mid
       } else {
         low = mid
@@ -100,23 +100,23 @@ export default class NCList {
     const pendingPromises: Promise<[unknown[], number]>[] = []
     for (
       let i = this.binarySearch(arr, from, searchGet);
-      i < arr.length && i >= 0 && inc * (testGet(arr[i]) as number) < inc * to;
+      i < arr.length && i >= 0 && inc * (testGet(arr[i]!) as number) < inc * to;
       i += inc
     ) {
-      if (arr[i][0] === this.lazyClass) {
+      if (arr[i]![0] === this.lazyClass) {
         // this is a lazily-loaded chunk of the nclist
-        const chunkNum = getChunk(arr[i]) as number
+        const chunkNum = getChunk(arr[i]!) as number
         const chunkItemsP = this.chunkCache
           .get(String(chunkNum), chunkNum)
           .then(item => [item, chunkNum] as [unknown[], number])
         pendingPromises.push(chunkItemsP)
       } else {
         // this is just a regular feature
-        yield [arr[i], path.concat(i)]
+        yield [arr[i]!, path.concat(i)]
       }
 
       // if this node has a contained sublist, process that too
-      const sublist = getSublist(arr[i]) as unknown[][] | undefined
+      const sublist = getSublist(arr[i]!) as unknown[][] | undefined
       if (sublist) {
         yield* this.iterateSublist(
           sublist,

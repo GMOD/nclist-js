@@ -121,14 +121,14 @@ class ArrayRepr {
     this.fields = []
     for (let cl = 0; cl < classes.length; cl += 1) {
       this.fields[cl] = {}
-      for (let f = 0; f < classes[cl].attributes.length; f += 1) {
-        this.fields[cl][classes[cl].attributes[f]] = f + 1
+      for (let f = 0; f < classes[cl]!.attributes.length; f += 1) {
+        this.fields[cl]![classes[cl]!.attributes[f]!] = f + 1
       }
-      if (classes[cl].proto === undefined) {
-        classes[cl].proto = {}
+      if (classes[cl]!.proto === undefined) {
+        classes[cl]!.proto = {}
       }
-      if (classes[cl].isArrayAttr === undefined) {
-        classes[cl].isArrayAttr = {}
+      if (classes[cl]!.isArrayAttr === undefined) {
+        classes[cl]!.isArrayAttr = {}
       }
     }
   }
@@ -147,18 +147,18 @@ class ArrayRepr {
 
   get(obj: ArrayObj, attr: string) {
     const classIdx = obj[0] as number
-    if (attr in this.fields[classIdx]) {
-      return obj[this.fields[classIdx][attr]]
+    if (attr in this.fields[classIdx]!) {
+      return obj[this.fields[classIdx]![attr]!]
     }
 
     // try lowercase
     const lcattr = attr.toLowerCase()
-    if (lcattr in this.fields[classIdx]) {
-      return obj[this.fields[classIdx][lcattr]]
+    if (lcattr in this.fields[classIdx]!) {
+      return obj[this.fields[classIdx]![lcattr]!]
     }
 
-    const adhocIndex = this.classes[classIdx].attributes.length + 1
-    const proto = this.classes[classIdx].proto ?? {}
+    const adhocIndex = this.classes[classIdx]!.attributes.length + 1
+    const proto = this.classes[classIdx]!.proto ?? {}
     if (
       adhocIndex >= obj.length ||
       !(attr in (obj[adhocIndex] as Record<string, unknown>))
@@ -229,8 +229,8 @@ class ArrayRepr {
 
   set(obj: ArrayObj, attr: string, val: unknown) {
     const classIdx = obj[0] as number
-    if (attr in this.fields[classIdx]) {
-      obj[this.fields[classIdx][attr]] = val
+    if (attr in this.fields[classIdx]!) {
+      obj[this.fields[classIdx]![attr]!] = val
     }
   }
 
@@ -292,7 +292,7 @@ class ArrayRepr {
 
     // use that to make precalculated get and set accessors for each field
     Object.keys(indices).forEach(attrname => {
-      const attrIndices = indices[attrname]
+      const attrIndices = indices[attrname]!
       // get
       getFieldAccessors[attrname] = function get(this: ArrayObj) {
         const classIdx = this[0] as number
