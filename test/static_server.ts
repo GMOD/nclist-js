@@ -4,6 +4,10 @@ import getPort from 'get-port'
 export default async function staticServer() {
   const app = express()
   const port = await getPort()
+  app.use((_req, res, next) => {
+    res.setHeader('Connection', 'close')
+    next()
+  })
   app.use(express.static('test/data'))
   const server = await new Promise(resolve => {
     const s = app.listen(port, () => {
