@@ -1,4 +1,3 @@
-//@ts-nocheck
 /**
  * @class ArrayRepr
  *
@@ -91,20 +90,45 @@
  *
  * That's what this class facilitates.
  */
+
+interface ClassDef {
+  attributes: string[]
+  proto?: Record<string, unknown>
+  isArrayAttr?: Record<string, boolean>
+}
+
+type ArrayObj = unknown[]
+
+export interface FieldAccessors {
+  get: ((this: ArrayObj, field: string) => unknown) & {
+    field_accessors: Partial<Record<string, (this: ArrayObj) => unknown>>
+  }
+  set: ((this: ArrayObj, field: string, val: unknown) => unknown) & {
+    field_accessors: Partial<
+      Record<string, (this: ArrayObj, val: unknown) => unknown>
+    >
+  }
+  tags: (this: ArrayObj) => string[]
+}
+
 class ArrayRepr {
-  constructor(classes) {
+  classes: ClassDef[]
+  fields: Record<string, number>[]
+  _accessors?: FieldAccessors
+
+  constructor(classes: ClassDef[]) {
     this.classes = classes
     this.fields = []
     for (let cl = 0; cl < classes.length; cl += 1) {
       this.fields[cl] = {}
-      for (let f = 0; f < classes[cl].attributes.length; f += 1) {
-        this.fields[cl][classes[cl].attributes[f]] = f + 1
+      for (let f = 0; f < classes[cl]!.attributes.length; f += 1) {
+        this.fields[cl]![classes[cl]!.attributes[f]!] = f + 1
       }
-      if (classes[cl].proto === undefined) {
-        classes[cl].proto = {}
+      if (classes[cl]!.proto === undefined) {
+        classes[cl]!.proto = {}
       }
-      if (classes[cl].isArrayAttr === undefined) {
-        classes[cl].isArrayAttr = {}
+      if (classes[cl]!.isArrayAttr === undefined) {
+        classes[cl]!.isArrayAttr = {}
       }
     }
   }
@@ -112,7 +136,7 @@ class ArrayRepr {
   /**
    * @private
    */
-  attrIndices(attr) {
+  attrIndices(attr: string) {
     return this.classes.map(
       x =>
         x.attributes.indexOf(attr) + 1 ||
@@ -121,46 +145,52 @@ class ArrayRepr {
     )
   }
 
-  get(obj, attr) {
-    if (attr in this.fields[obj[0]]) {
-      return obj[this.fields[obj[0]][attr]]
+  get(obj: ArrayObj, attr: string) {
+    const classIdx = obj[0] as number
+    if (attr in this.fields[classIdx]!) {
+      return obj[this.fields[classIdx]![attr]!]
     }
 
     // try lowercase
     const lcattr = attr.toLowerCase()
-    if (lcattr in this.fields[obj[0]]) {
-      return obj[this.fields[obj[0]][lcattr]]
+    if (lcattr in this.fields[classIdx]!) {
+      return obj[this.fields[classIdx]![lcattr]!]
     }
 
-    const adhocIndex = this.classes[obj[0]].attributes.length + 1
-    if (adhocIndex >= obj.length || !(attr in obj[adhocIndex])) {
-      if (attr in this.classes[obj[0]].proto) {
-        return this.classes[obj[0]].proto[attr]
+    const adhocIndex = this.classes[classIdx]!.attributes.length + 1
+    const proto = this.classes[classIdx]!.proto ?? {}
+    if (
+      adhocIndex >= obj.length ||
+      !(attr in (obj[adhocIndex] as Record<string, unknown>))
+    ) {
+      if (attr in proto) {
+        return proto[attr]
       }
       return undefined
     }
-    return obj[adhocIndex][attr]
+    return (obj[adhocIndex] as Record<string, unknown>)[attr]
   }
 
-  makeSetter(attr) {
-    return (obj, val) => {
+  makeSetter(attr: string) {
+    return (obj: ArrayObj, val: unknown) => {
       this.set(obj, attr, val)
     }
   }
 
-  makeGetter(attr) {
-    return obj => {
+  makeGetter(attr: string) {
+    return (obj: ArrayObj) => {
       return this.get(obj, attr)
     }
   }
 
-  makeFastGetter(attr) {
+  makeFastGetter(attr: string) {
     // can be used only if attr is guaranteed to be in
     // the "classes" array for this object
     const indices = this.attrIndices(attr)
-    return function get(obj) {
-      if (indices[obj[0]] !== undefined) {
-        return obj[indices[obj[0]]]
+    return function get(obj: ArrayObj) {
+      const classIdx = obj[0] as number
+      if (indices[classIdx] !== undefined) {
+        return obj[indices[classIdx]]
       }
       return undefined
     }
@@ -197,71 +227,89 @@ class ArrayRepr {
     return this._accessors
   }
 
+  set(obj: ArrayObj, attr: string, val: unknown) {
+    const classIdx = obj[0] as number
+    if (attr in this.fields[classIdx]!) {
+      obj[this.fields[classIdx]![attr]!] = val
+    }
+  }
+
   /**
    * @private
    */
-  _makeAccessors() {
-    const indices = {}
+  _makeAccessors(): FieldAccessors {
+    const indices: Record<string, (number | undefined)[]> = {}
 
-    const accessors = {
-      get(field) {
-        const f = this.get.field_accessors[field.toLowerCase()]
-        if (f) {
-          return f.call(this)
-        }
-        return undefined
-      },
-      set(field, val) {
-        const f = this.set.field_accessors[field]
-        if (f) {
-          return f.call(this, val)
-        }
-        return undefined
-      },
-      tags() {
-        return tags[this[0]] || []
-      },
-    }
-    accessors.get.field_accessors = {}
-    accessors.set.field_accessors = {}
+    const getFieldAccessors: Partial<
+      Record<string, (this: ArrayObj) => unknown>
+    > = {}
+    const setFieldAccessors: Partial<
+      Record<string, (this: ArrayObj, val: unknown) => unknown>
+    > = {}
+
+    const getFn = function (this: ArrayObj, field: string) {
+      const f = getFieldAccessors[field.toLowerCase()]
+      if (f) {
+        return f.call(this)
+      }
+      return undefined
+    } as FieldAccessors['get']
+    getFn.field_accessors =
+      getFieldAccessors as FieldAccessors['get']['field_accessors']
+
+    const setFn = function (this: ArrayObj, field: string, val: unknown) {
+      const f = setFieldAccessors[field]
+      if (f) {
+        return f.call(this, val)
+      }
+      return undefined
+    } as FieldAccessors['set']
+    setFn.field_accessors =
+      setFieldAccessors as FieldAccessors['set']['field_accessors']
 
     // make a data structure as: { attr_name: [offset,offset,offset], }
     // that will be convenient for finding the location of the attr
     // for a given class like: indexForAttr{attrname}[classnum]
     this.classes.forEach((cdef, classnum) => {
-      ;(cdef.attributes || []).forEach((attrname, offset) => {
-        indices[attrname] = indices[attrname] || []
+      cdef.attributes.forEach((attrname, offset) => {
+        indices[attrname] = indices[attrname] ?? []
         indices[attrname][classnum] = offset + 1
 
-        attrname = attrname.toLowerCase()
+        const lcAttrname = attrname.toLowerCase()
 
-        indices[attrname] = indices[attrname] || []
-        indices[attrname][classnum] = offset + 1
+        indices[lcAttrname] = indices[lcAttrname] ?? []
+        indices[lcAttrname][classnum] = offset + 1
       })
     })
 
     // lowercase all the class attributes
     const tags = this.classes.map(c => c.attributes)
 
+    const tagsFn = function (this: ArrayObj) {
+      const classIdx = this[0] as number
+      return tags[classIdx] ?? []
+    }
+
     // GFF3 standard column fields that are always numeric
     const numericFields = new Set(['start', 'end', 'strand', 'phase', 'score'])
 
     // use that to make precalculated get and set accessors for each field
     Object.keys(indices).forEach(attrname => {
-      const attrIndices = indices[attrname]
+      const attrIndices = indices[attrname]!
       const isNumeric = numericFields.has(attrname)
       // get
-      accessors.get.field_accessors[attrname] = !attrIndices
-        ? function get() {
-            return undefined
+      getFieldAccessors[attrname] = function get(this: ArrayObj) {
+        const classIdx = this[0] as number
+        const idx = attrIndices[classIdx]
+        if (idx !== undefined) {
+          const val = this[idx]
+          if (isNumeric && typeof val === 'string') {
+            return +val
           }
-        : function get() {
-            const val = this[attrIndices[this[0]]]
-            if (isNumeric && typeof val === 'string') {
-              return +val
-            }
-            return val
-          }
+          return val
+        }
+        return undefined
+      }
 
       // // set
       // accessors.set.field_accessors[attrname] = !attrIndices
@@ -271,6 +319,12 @@ class ArrayRepr {
       //       return v
       //     }
     })
+
+    const accessors: FieldAccessors = {
+      get: getFn,
+      set: setFn,
+      tags: tagsFn,
+    }
 
     return accessors
   }
