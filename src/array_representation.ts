@@ -290,15 +290,23 @@ class ArrayRepr {
       return tags[classIdx] ?? []
     }
 
+    // GFF3 standard column fields that are always numeric
+    const numericFields = new Set(['start', 'end', 'strand', 'phase', 'score'])
+
     // use that to make precalculated get and set accessors for each field
     Object.keys(indices).forEach(attrname => {
       const attrIndices = indices[attrname]!
+      const isNumeric = numericFields.has(attrname)
       // get
       getFieldAccessors[attrname] = function get(this: ArrayObj) {
         const classIdx = this[0] as number
         const idx = attrIndices[classIdx]
         if (idx !== undefined) {
-          return this[idx]
+          const val = this[idx]
+          if (isNumeric && typeof val === 'string') {
+            return +val
+          }
+          return val
         }
         return undefined
       }
