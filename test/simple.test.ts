@@ -43,3 +43,46 @@ describe('simple data', () => {
     })
   })
 })
+
+describe('volvox_genes_nclist - phase string to number conversion', () => {
+  test('phase stored as string in nclist is returned as number', async () => {
+    const store = new NCListStore({
+      baseUrl: `${testServer.url}/`,
+      urlTemplate: 'volvox_genes_nclist/{refseq}/trackData.json',
+      readFile: url => new RemoteFile(url, { fetch }).readFile(),
+    })
+
+    const features = []
+    for await (const feature of store.getFeatures({
+      refName: 'ctgA',
+      start: 1,
+      end: 50000,
+    })) {
+      features.push(feature)
+    }
+
+    expect(features.length).toBe(1)
+    const gene = features[0]
+    const mRNAs = gene.get('subfeatures')
+    expect(mRNAs.length).toBeGreaterThan(0)
+
+    // collect all CDS subfeatures (class 1, which have Phase stored as strings)
+    const cdsFeatures = []
+    for (const mRNA of mRNAs) {
+      const subs = mRNA.get('subfeatures')
+      for (const sub of subs) {
+        if (sub.get('phase') !== undefined) {
+          cdsFeatures.push(sub)
+        }
+      }
+    }
+
+    expect(cdsFeatures.length).toBeGreaterThan(0)
+    for (const cds of cdsFeatures) {
+      // the raw value at index 4 in the nclist array is a string (e.g. "0", "1", "2")
+      expect(typeof cds[4]).toBe('string')
+      // but .get('phase') converts it to a number
+      expect(typeof cds.get('phase')).toBe('number')
+    }
+  })
+})
