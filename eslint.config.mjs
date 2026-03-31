@@ -12,6 +12,7 @@ export default defineConfig(
       'esm/*',
       'example/*',
       'eslint.config.mjs',
+      'vitest.config.ts',
     ],
   },
   {
