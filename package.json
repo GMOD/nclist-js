@@ -38,7 +38,7 @@
     "lint": "eslint --report-unused-disable-directives --max-warnings 0",
     "docs": "documentation readme --shallow src/feature_store.ts --section API",
     "clean": "rimraf dist esm",
-    "prebuild": "pnpm docs && pnpm clean && pnpm lint",
+    "prebuild": "pnpm clean && pnpm lint",
     "build:esm": "tsc --outDir esm",
     "build:es5": "tsc --module commonjs --moduleResolution bundler --outDir dist",
     "postbuild:es5": "echo '{\"type\": \"commonjs\"}' > dist/package.json",
