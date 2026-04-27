@@ -116,3 +116,12 @@ yielding feature objects.
   - `args.end`
     **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**
     end of region. 0-based half-open.
+
+## Publishing
+
+[Trusted publishing](https://docs.npmjs.com/about-trusted-publishing) via GitHub
+Actions.
+
+```bash
+npm version patch  # or minor/major
+```
