@@ -42,6 +42,8 @@ export default defineConfig(
 
       'no-underscore-dangle': 0,
       curly: 'error',
+      'object-shorthand': 'error',
+      '@typescript-eslint/no-unnecessary-condition': 'error',
       'no-empty': 'off',
       semi: ['error', 'never'],
 
