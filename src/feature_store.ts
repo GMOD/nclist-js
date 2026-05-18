@@ -7,16 +7,6 @@ import LazyArray from './lazy_array.ts'
 import GenericNCList from './nclist.ts'
 import { newURL, readJSON } from './util.ts'
 
-function idfunc() {
-  return this._uniqueID
-}
-function parentfunc() {
-  return this._parent
-}
-function childrenfunc() {
-  return this.get('subfeatures')
-}
-
 /**
  * Sequence feature store using nested containment
  * lists held in JSON files that are lazily read.
@@ -68,9 +58,7 @@ export default class NCListStore {
       this.baseUrl,
     )
 
-    // fetch the trackdata
     return readJSON(url, this.readFile).then(trackInfo =>
-      // trackInfo = JSON.parse( trackInfo );
       this.parseTrackInfo(trackInfo, url),
     )
   }
@@ -90,18 +78,15 @@ export default class NCListStore {
 
     const { histograms } = trackInfo
     if (histograms?.meta) {
-      // eslint-disable-next-line @typescript-eslint/prefer-for-of
-      for (let i = 0; i < histograms.meta.length; i += 1) {
-        histograms.meta[i].lazyArray = new LazyArray(
-          { ...histograms.meta[i].arrayParams, readFile: this.readFile },
+      for (const meta of histograms.meta) {
+        meta.lazyArray = new LazyArray(
+          { ...meta.arrayParams, readFile: this.readFile },
           url,
         )
       }
       refData._histograms = histograms
-    }
 
-    // parse any strings in the histogram data that look like numbers
-    if (refData._histograms) {
+      // parse any strings in the histogram data that look like numbers
       Object.keys(refData._histograms).forEach(key => {
         const entries = refData._histograms[key]
         entries.forEach(entry => {
@@ -172,10 +157,9 @@ export default class NCListStore {
     // bases/bin, then we should choose the 2,000 histogramMeta rather than the
     // 20,000)
     let histogramMeta = data._histograms.meta[0]
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < data._histograms.meta.length; i += 1) {
-      if (basesPerBin >= data._histograms.meta[i].basesPerBin) {
-        histogramMeta = data._histograms.meta[i]
+    for (const meta of data._histograms.meta) {
+      if (basesPerBin >= meta.basesPerBin) {
+        histogramMeta = meta
       }
     }
 
@@ -188,10 +172,7 @@ export default class NCListStore {
       // we can use the server-supplied counts
       const firstServerBin = Math.floor(start / histogramMeta.basesPerBin)
       binRatio = Math.round(binRatio)
-      const histogram = []
-      for (let bin = 0; bin < numBins; bin += 1) {
-        histogram[bin] = 0
-      }
+      const histogram = new Array(numBins).fill(0)
 
       for await (const [i, val] of histogramMeta.lazyArray.range(
         firstServerBin,
@@ -244,10 +225,10 @@ export default class NCListStore {
     feature.get = accessors.get
     feature.tags = accessors.tags
     feature._uniqueID = id
-    feature.id = idfunc
+    feature.id = () => id
     feature._parent = parent
-    feature.parent = parentfunc
-    feature.children = childrenfunc
+    feature.parent = () => parent
+    feature.children = () => feature.get('subfeatures')
     ;(feature.get('subfeatures') || []).forEach((f, i) => {
       this.decorateFeature(accessors, f, `${id}-${i}`, feature)
     })

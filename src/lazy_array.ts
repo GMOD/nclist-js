@@ -28,22 +28,6 @@ export default class LazyArray {
     })
   }
 
-  /**
-   * call the callback on one element of the array
-   * @param i index
-   * @param callback callback, gets called with (i, value, param)
-   * @param param (optional) callback will get this as its last parameter
-   */
-  index(i, callback, param) {
-    this.range(i, i, callback, undefined, param)
-  }
-
-  /**
-   * async generator for the elements in the range [start,end]
-   *
-   * @param start index of first element to call the callback on
-   * @param end index of last element to call the callback on
-   */
   async *range(start, end) {
     start = Math.max(0, start)
     end = Math.min(end, this.length - 1)

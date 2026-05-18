@@ -142,12 +142,6 @@ class ArrayRepr {
     return obj[adhocIndex][attr]
   }
 
-  makeSetter(attr) {
-    return (obj, val) => {
-      this.set(obj, attr, val)
-    }
-  }
-
   makeGetter(attr) {
     return obj => {
       return this.get(obj, attr)
@@ -165,14 +159,6 @@ class ArrayRepr {
       return undefined
     }
   }
-
-  // construct(self, obj, klass) {
-  //   const result = new Array(self.classes[klass].length)
-  //   Object.keys(obj).forEach(attr => {
-  //     this.set(result, attr, obj[attr])
-  //   })
-  //   return result
-  // }
 
   /**
    * Returns fast pre-compiled getter and setter functions for use with
@@ -263,13 +249,6 @@ class ArrayRepr {
             return val
           }
 
-      // // set
-      // accessors.set.field_accessors[attrname] = !attrIndices
-      //   ? () => undefined
-      //   : v => {
-      //       this[attrIndices[this[0]]] = v
-      //       return v
-      //     }
     })
 
     return accessors
