@@ -4,7 +4,7 @@ Read legacy JBrowse 1 nested containment list JSON.
 
 ## Status
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/nclist-js/publish.yml?branch=main)](https://github.com/GMOD/nclist-js/actions)
+![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/nclist-js/publish.yml?branch=main)
 [![Coverage Status](https://img.shields.io/codecov/c/github/GMOD/nclist-js/main.svg?style=flat-square)](https://codecov.io/gh/GMOD/nclist-js/branch/main)
 [![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
 
