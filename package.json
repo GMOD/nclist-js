@@ -42,8 +42,7 @@
     "postversion": "git push --follow-tags",
     "build": "pnpm build:esm && pnpm build:es5",
     "coverage": "pnpm test --coverage",
-    "docs": "documentation readme --shallow src/feature_store.ts --section API",
-    "prepublishOnly": "pnpm test --run && pnpm build"
+    "docs": "documentation readme --shallow src/feature_store.ts --section API"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
