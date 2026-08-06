@@ -22,7 +22,7 @@ jobs:
       # unrelated reformatting mixed into their diff.
       - run: pnpm format:check
       - run: pnpm build
-      - run: pnpm test
+      - run: pnpm test --run
 
   publish:
     name: Publish to npm
