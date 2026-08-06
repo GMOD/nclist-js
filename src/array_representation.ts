@@ -248,7 +248,6 @@ class ArrayRepr {
             }
             return val
           }
-
     })
 
     return accessors
