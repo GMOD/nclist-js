@@ -1,6 +1,5 @@
 //@ts-nocheck
-import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import QuickLRU from '@jbrowse/quick-lru'
+import { SharedReadCache } from '@gmod/shared-read-cache'
 
 import { newURL, readJSON } from './util.ts'
 
@@ -22,8 +21,8 @@ export default class LazyArray {
     if (!readFile) {
       throw new Error('must provide readFile callback')
     }
-    this.chunkCache = new AbortablePromiseCache({
-      cache: new QuickLRU({ maxSize: cacheSize }),
+    this.chunkCache = new SharedReadCache({
+      maxSize: cacheSize,
       fill: this.getChunk.bind(this),
     })
   }
@@ -37,7 +36,7 @@ export default class LazyArray {
 
     const chunkreadFiles = []
     for (let chunk = firstChunk; chunk <= lastChunk; chunk += 1) {
-      chunkreadFiles.push(this.chunkCache.get(chunk, chunk))
+      chunkreadFiles.push(this.chunkCache.get(chunk))
     }
     for (const elt of chunkreadFiles) {
       const [chunkNumber, chunkData] = await elt

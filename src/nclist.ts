@@ -1,14 +1,13 @@
 //@ts-nocheck
-import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import QuickLRU from '@jbrowse/quick-lru'
+import { SharedReadCache } from '@gmod/shared-read-cache'
 
 import { newURL, readJSON } from './util.ts'
 
 export default class NCList {
   constructor({ readFile, cacheSize = 100 }) {
     this.topList = []
-    this.chunkCache = new AbortablePromiseCache({
-      cache: new QuickLRU({ maxSize: cacheSize }),
+    this.chunkCache = new SharedReadCache({
+      maxSize: cacheSize,
       fill: this.readChunkItems.bind(this),
     })
     this.readFile = readFile
@@ -71,7 +70,7 @@ export default class NCList {
         // this is a lazily-loaded chunk of the nclist
         const chunkNum = getChunk(arr[i])
         const chunkItemsP = this.chunkCache
-          .get(chunkNum, chunkNum)
+          .get(chunkNum)
           .then(item => [item, chunkNum])
         pendingPromises.push(chunkItemsP)
       } else {

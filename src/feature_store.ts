@@ -1,6 +1,5 @@
 //@ts-nocheck
-import AbortablePromiseCache from '@gmod/abortable-promise-cache'
-import QuickLRU from '@jbrowse/quick-lru'
+import { SharedReadCache } from '@gmod/shared-read-cache'
 
 import ArrayRepr from './array_representation.ts'
 import LazyArray from './lazy_array.ts'
@@ -28,8 +27,8 @@ export default class NCListStore {
       throw new Error(`must provide a "readFile" function argument`)
     }
 
-    this.dataRootCache = new AbortablePromiseCache({
-      cache: new QuickLRU({ maxSize: cacheSize }),
+    this.dataRootCache = new SharedReadCache({
+      maxSize: cacheSize,
       fill: this.fetchDataRoot.bind(this),
     })
   }
@@ -49,7 +48,7 @@ export default class NCListStore {
   }
 
   getDataRoot(refName) {
-    return this.dataRootCache.get(refName, refName)
+    return this.dataRootCache.get(refName)
   }
 
   fetchDataRoot(refName) {
