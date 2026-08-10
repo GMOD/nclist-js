@@ -1,3 +1,5 @@
+## [3.0.13](https://github.com/GMOD/nclist-js/compare/v3.0.12...v3.0.13) (2026-08-10)
+
 ## [3.0.12](https://github.com/GMOD/nclist-js/compare/v3.0.11...v3.0.12) (2026-08-10)
 
 ### Chores
