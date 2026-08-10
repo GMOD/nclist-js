@@ -127,6 +127,14 @@ export default class NCListStore {
     end,
     numBins,
     basesPerBin,
+  }: {
+    refName: string
+    start: number
+    end: number
+    // one or the other, not both: each is derived from the other below, and
+    // supplying neither is the TypeError this throws
+    numBins?: number
+    basesPerBin?: number
   }) {
     const data = await this.getDataRoot(refName)
     if (numBins) {
@@ -200,7 +208,15 @@ export default class NCListStore {
    * @param {number} args.end end of region. 0-based half-open.
    * @yields {object}
    */
-  async *getFeatures({ refName, start, end }) {
+  async *getFeatures({
+    refName,
+    start,
+    end,
+  }: {
+    refName: string
+    start: number
+    end: number
+  }) {
     const data = await this.getDataRoot(refName)
     const accessors = data.attrs?.accessors()
     for await (const [feature, path] of data.nclist.iterate(start, end)) {

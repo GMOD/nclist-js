@@ -1,6 +1,8 @@
 import express from 'express'
 import getPort from 'get-port'
 
+import type { Server } from 'node:http'
+
 export default async function staticServer() {
   const app = express()
   const port = await getPort()
@@ -9,7 +11,7 @@ export default async function staticServer() {
     next()
   })
   app.use(express.static('test/data'))
-  const server = await new Promise(resolve => {
+  const server = await new Promise<Server>(resolve => {
     const s = app.listen(port, () => {
       resolve(s)
     })

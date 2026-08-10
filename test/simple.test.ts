@@ -5,20 +5,26 @@ import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import makeTestServer from './static_server.ts'
 import NCListStore from '../src/index.ts'
 
-let testServer
+let testServer: Awaited<ReturnType<typeof makeTestServer>>
 beforeAll(async () => {
   testServer = await makeTestServer()
 })
 afterAll(() => testServer.close())
 
 describe('simple data', () => {
-  const testCases = [
+  // annotated rather than inferred: an array of mixed-type pairs widens to
+  // `(string | (() => ...))[][]`, so destructuring it hands `test()` a name that
+  // might be a function and a `params` that might be a string
+  const testCases: [
+    string,
+    () => ConstructorParameters<typeof NCListStore>[0],
+  ][] = [
     [
       'read with generic-filehandle2 RemoteFile with http urls',
       () => ({
         baseUrl: `${testServer.url}/`,
         urlTemplate: 'volvox_genes/{refseq}/trackData.json',
-        readFile: url => new RemoteFile(url, { fetch }).readFile(),
+        readFile: (url: string) => new RemoteFile(url, { fetch }).readFile(),
       }),
     ],
   ]
@@ -49,7 +55,7 @@ describe('volvox_genes_nclist - phase string to number conversion', () => {
     const store = new NCListStore({
       baseUrl: `${testServer.url}/`,
       urlTemplate: 'volvox_genes_nclist/{refseq}/trackData.json',
-      readFile: url => new RemoteFile(url, { fetch }).readFile(),
+      readFile: (url: string) => new RemoteFile(url, { fetch }).readFile(),
     })
 
     const features = []
