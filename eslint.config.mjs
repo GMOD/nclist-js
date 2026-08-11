@@ -43,6 +43,8 @@ export default defineConfig(
       curly: 'error',
       'object-shorthand': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'error',
+      eqeqeq: 'error',
+      '@typescript-eslint/consistent-type-imports': 'error',
       'no-empty': 'off',
       semi: ['error', 'never'],
 
