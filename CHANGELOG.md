@@ -1,3 +1,16 @@
+## [3.0.14](https://github.com/GMOD/nclist-js/compare/v3.0.13...v3.0.14) (2026-08-21)
+
+### Bug Fixes
+
+- Take the shared-read-cache release that fixes abort, eviction and weighing ([3c357b7](https://github.com/GMOD/nclist-js/commit/3c357b73797dbe6c68d3bde8a2b5b37b62cd9f2e))
+
+### Chores
+
+- Render only the commit subject, and link the commit ([ec2087e](https://github.com/GMOD/nclist-js/commit/ec2087e69421408b4091e3ee0eaa21d1520b1b1c))
+- Create a GitHub release for each published tag ([13535f0](https://github.com/GMOD/nclist-js/commit/13535f0b9f655012b1a1e779da9b58d2878d1301))
+- Enforce type strippability in tsconfig, add missing lint rules ([fe461bc](https://github.com/GMOD/nclist-js/commit/fe461bcf2145a960a29ce3343948cc18aaf60481))
+- Keep agent worktrees out of the toolchain's way ([00fe0bb](https://github.com/GMOD/nclist-js/commit/00fe0bb8ee78c21229e656e88cad34c5c2172c7f))
+
 ## [3.0.13](https://github.com/GMOD/nclist-js/compare/v3.0.12...v3.0.13) (2026-08-10)
 
 ## [3.0.12](https://github.com/GMOD/nclist-js/compare/v3.0.11...v3.0.12) (2026-08-10)
