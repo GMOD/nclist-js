@@ -67,7 +67,7 @@
     "vitest": "^4.1.10"
   },
   "dependencies": {
-    "@gmod/shared-read-cache": "^1.7.2",
+    "@gmod/shared-read-cache": "^2.0.0",
     "@jridgewell/resolve-uri": "^3.1.2"
   },
   "keywords": [
