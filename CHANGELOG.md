@@ -1,3 +1,9 @@
+## [3.0.15](https://github.com/GMOD/nclist-js/compare/v3.0.14...v3.0.15) (2026-10-09)
+
+### Chores
+
+- Bump @gmod/shared-read-cache to 2.0.0 ([6dde936](https://github.com/GMOD/nclist-js/commit/6dde93631081b88ee417b5f905c1683db26adb1b))
+
 ## [3.0.14](https://github.com/GMOD/nclist-js/compare/v3.0.13...v3.0.14) (2026-08-21)
 
 ### Bug Fixes
