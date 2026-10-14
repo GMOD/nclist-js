@@ -2,8 +2,6 @@
 
 Read legacy JBrowse 1 nested containment list JSON.
 
-## Status
-
 ![Build Status](https://img.shields.io/github/actions/workflow/status/GMOD/nclist-js/publish.yml?branch=main)
 [![Coverage Status](https://img.shields.io/codecov/c/github/GMOD/nclist-js/main.svg?style=flat-square)](https://codecov.io/gh/GMOD/nclist-js/branch/main)
 [![NPM version](https://img.shields.io/npm/v/@gmod/nclist.svg?logo=npm&style=flat-square)](https://npmjs.org/package/@gmod/nclist)
@@ -13,25 +11,20 @@ Read legacy JBrowse 1 nested containment list JSON.
 ```javascript
 import { RemoteFile } from 'generic-filehandle2'
 import NCList from '@gmod/nclist'
-;(async () => {
-  const store = new NCList({
-    baseUrl: `http://my.server/path/to/data/dir/`,
-    urlTemplate: 'volvox_genes/{refseq}/trackData.json',
-    readFile: url => new RemoteFile(url).readFile(),
-  })
 
-  for await (const feature of store.getFeatures({
-    refName: 'ctgA',
-    start: 0,
-    end: 50000,
-  })) {
-    console.log(
-      `got feature at ${feature.get('seq_id')}:${feature.get(
-        'start',
-      )}-${feature.get('end')}`,
-    )
-  }
-})()
+const store = new NCList({
+  baseUrl: 'http://my.server/path/to/data/dir/',
+  urlTemplate: 'volvox_genes/{refseq}/trackData.json',
+  readFile: url => new RemoteFile(url).readFile(),
+})
+
+for await (const f of store.getFeatures({
+  refName: 'ctgA',
+  start: 0,
+  end: 50000,
+})) {
+  console.log(`${f.get('seq_id')}:${f.get('start')}-${f.get('end')}`)
+}
 ```
 
 ## API
