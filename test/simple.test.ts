@@ -2,8 +2,8 @@ import fetch from 'cross-fetch'
 import { RemoteFile } from 'generic-filehandle2'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 
-import makeTestServer from './static_server.ts'
 import NCListStore from '../src/index.ts'
+import makeTestServer from './static_server.ts'
 
 let testServer: Awaited<ReturnType<typeof makeTestServer>>
 beforeAll(async () => {
